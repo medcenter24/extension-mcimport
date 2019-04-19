@@ -1,0 +1,28 @@
+{
+    "name": "medcenter24/extension-mcimport",
+    "type": "medcenter24-extension",
+    "description": "",
+    "keywords": ["medcenter24", "extension", "module", "package", "mcimport"],
+    "authors": [
+        {
+            "name": "Oleksandr Zagovorychev",
+            "email": "zagovorychev@gmail.com"
+        }
+    ],
+    "extra": {
+        "medcenter24-extension-name": "McImport",
+        "laravel": {
+            "providers": [
+                "medcenter24\\McImport\\Providers\\McImportServiceProvider"
+            ],
+            "aliases": {
+                
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "medcenter24\\McImport\\": ""
+        }
+    }
+}
