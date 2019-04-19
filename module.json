@@ -1,0 +1,14 @@
+{
+    "name": "McImport",
+    "alias": "mcimport",
+    "description": "",
+    "keywords": [],
+    "active": 1,
+    "order": 0,
+    "providers": [
+        "medcenter24\\McImport\\Providers\\McImportServiceProvider"
+    ],
+    "aliases": {},
+    "files": [],
+    "requires": []
+}
