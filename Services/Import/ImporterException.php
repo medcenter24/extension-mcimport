@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace App\Services\Import;
+namespace medcenter24\mcCore\App\Services\Import;
 
 
 use Exception;
