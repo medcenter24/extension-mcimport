@@ -17,10 +17,10 @@
  */
 
 
-namespace App\Services\Import;
+namespace medcenter24\mcCore\App\Services\Import;
 
 
-use App\Support\Core\Configurable;
+use medcenter24\mcCore\App\Support\Core\Configurable;
 use Illuminate\Support\Facades\Log;
 
 class Importer extends Configurable
