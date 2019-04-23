@@ -19,11 +19,11 @@
 namespace medcenter24\McImport\Http\Controllers\Api\V1\Director;
 
 use medcenter24\mcCore\App\Http\Controllers\ApiController;
-use medcenter24\mcCore\App\Services\CaseImporterService;
 use medcenter24\mcCore\App\Services\UploaderService;
 use medcenter24\mcCore\App\Transformers\UploadedFileTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
+use medcenter24\McDhv24\Services\Import\CaseImporterService;
 
 class CasesImporterController extends ApiController
 {
