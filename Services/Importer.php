@@ -17,7 +17,7 @@
  */
 
 
-namespace medcenter24\mcCore\App\Services\Import;
+namespace medcenter24\McImport\Services;
 
 
 use medcenter24\mcCore\App\Support\Core\Configurable;

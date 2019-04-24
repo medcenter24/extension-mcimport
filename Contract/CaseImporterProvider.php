@@ -16,17 +16,42 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\mcCore\App\Services\Import;
+namespace medcenter24\McImport\Contract;
 
 
-use Exception;
-use Throwable;
+use medcenter24\mcCore\App\Accident;
 
-class ImporterException extends Exception
+interface CaseImporterProvider
 {
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-        \Log::error($message);
-    }
+    /**
+     * Import file from the path
+     * @param string $path
+     * @return bool
+     */
+    public function import(string $path): bool;
+
+    /**
+     * Last imported accident
+     * @return Accident
+     */
+    public function getLastAccident(): Accident;
+
+    /**
+     * Load file to the object
+     * @param string $path
+     * @return CaseImporterProvider
+     */
+    public function load($path = ''): self;
+
+    /**
+     * Check that file could be parsed by that DataProvider
+     * @return bool
+     */
+    public function check(): bool;
+
+    /**
+     * Load parsed data as array
+     * @return array
+     */
+    public function getData(): array;
 }

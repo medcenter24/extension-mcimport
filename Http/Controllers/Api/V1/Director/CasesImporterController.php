@@ -18,12 +18,13 @@
 
 namespace medcenter24\McImport\Http\Controllers\Api\V1\Director;
 
+use Dingo\Api\Http\Response;
 use medcenter24\mcCore\App\Http\Controllers\ApiController;
 use medcenter24\mcCore\App\Services\UploaderService;
 use medcenter24\mcCore\App\Transformers\UploadedFileTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
-use medcenter24\McDhv24\Services\Import\CaseImporterService;
+use medcenter24\McImport\Services\CaseImporterService;
 
 class CasesImporterController extends ApiController
 {
@@ -56,9 +57,9 @@ class CasesImporterController extends ApiController
 
     /**
      * @param Request $request
-     * @return \Dingo\Api\Http\Response
+     * @return Response
      */
-    public function upload(Request $request)
+    public function upload(Request $request): Response
     {
         if (!count($request->allFiles())) {
             $this->response->errorBadRequest('You need to provide files for import');
@@ -78,9 +79,9 @@ class CasesImporterController extends ApiController
 
     /**
      * Already loaded list of files
-     * @return \Dingo\Api\Http\Response
+     * @return Response
      */
-    public function uploads()
+    public function uploads(): Response
     {
         $uploadedCases = $this->user()->uploads()->where('storage', $this->uploaderService->getOption(UploaderService::CONF_FOLDER))->get();
         return $this->response->collection($uploadedCases, new UploadedFileTransformer);
@@ -88,9 +89,9 @@ class CasesImporterController extends ApiController
 
     /**
      * @param $id
-     * @return \Dingo\Api\Http\Response
+     * @return Response
      */
-    public function import($id)
+    public function import($id): Response
     {
         $path = $this->uploaderService->getPathById($id);
         $accident = $this->importerService->import($path);
@@ -105,9 +106,9 @@ class CasesImporterController extends ApiController
     /**
      * Delete uploaded file
      * @param $id
-     * @return \Dingo\Api\Http\Response
+     * @return Response
      */
-    public function destroy ($id)
+    public function destroy ($id): Response
     {
         $this->uploaderService->delete($id);
         return $this->response->noContent();
