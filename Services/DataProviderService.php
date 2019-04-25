@@ -53,8 +53,7 @@ abstract class DataProviderService implements CaseImporterProvider
 
     /**
      * Store case (accident) to data base
-     * @param string $path
      * @return bool
      */
-    abstract public function import(string $path): bool;
+    abstract public function import(): bool;
 }
