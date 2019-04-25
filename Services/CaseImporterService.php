@@ -28,6 +28,7 @@ class CaseImporterService implements CaseImporter
     public function import(string $path): Accident
     {
         // get Docx from the storage and run importer
+        /** @var CaseImporterProvider $provider */
         $provider = resolve(CaseImporterProvider::class);
         $provider->load($path);
         $provider->import();

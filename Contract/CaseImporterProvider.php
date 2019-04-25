@@ -25,10 +25,9 @@ interface CaseImporterProvider
 {
     /**
      * Import file from the path
-     * @param string $path
      * @return bool
      */
-    public function import(string $path): bool;
+    public function import(): bool;
 
     /**
      * Last imported accident
