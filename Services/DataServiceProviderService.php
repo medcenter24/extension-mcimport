@@ -16,41 +16,44 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Contract;
+namespace medcenter24\McImport\Services;
 
 
-use medcenter24\mcCore\App\Accident;
+use medcenter24\McImport\Contract\CaseImporterProviderService;
 
-interface CaseImporterProvider
+abstract class DataServiceProviderService implements CaseImporterProviderService
 {
     /**
-     * Import file from the path
-     * @return bool
+     * @var array
      */
-    public function import(): bool;
+    protected $data = [];
 
     /**
-     * Last imported accident
-     * @return Accident
-     */
-    public function getLastAccident(): Accident;
-
-    /**
-     * Load file to the object
+     * Load file to data provider
+     *
      * @param string $path
-     * @return CaseImporterProvider
+     * @return self
      */
-    public function load($path = ''): self;
+    abstract public function load($path = ''): CaseImporterProviderService;
 
     /**
      * Check that file could be parsed by that DataProvider
      * @return bool
      */
-    public function check(): bool;
+    abstract public function check(): bool;
 
     /**
      * Load parsed data as array
      * @return array
      */
-    public function getData(): array;
+    public function getData(): array
+    {
+        return $this->data;
+    }
+
+    /**
+     * Store case (accident) to data base
+     * @return bool
+     */
+    abstract public function import(): bool;
 }
