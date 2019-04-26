@@ -21,15 +21,15 @@ namespace medcenter24\McImport\Services;
 
 use medcenter24\mcCore\App\Accident;
 use medcenter24\McImport\Contract\CaseImporter;
-use medcenter24\McImport\Contract\CaseImporterProvider;
+use medcenter24\McImport\Contract\CaseImporterProviderService;
 
 class CaseImporterService implements CaseImporter
 {
     public function import(string $path): Accident
     {
         // get Docx from the storage and run importer
-        /** @var CaseImporterProvider $provider */
-        $provider = resolve(CaseImporterProvider::class);
+        /** @var CaseImporterService $provider */
+        $provider = resolve(CaseImporterProviderService::class);
         $provider->load($path);
         $provider->import();
 
