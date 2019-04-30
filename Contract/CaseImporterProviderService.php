@@ -20,20 +20,21 @@ namespace medcenter24\McImport\Contract;
 
 
 use medcenter24\mcCore\App\Accident;
+use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
+use medcenter24\McImport\Services\ImporterException;
 
 interface CaseImporterProviderService
 {
     /**
      * Import file from the path
-     * @return bool
      */
-    public function import(): bool;
+    public function import(): void;
 
     /**
-     * Last imported accident
+     * imported accident
      * @return Accident
      */
-    public function getLastAccident(): Accident;
+    public function getAccident(): Accident;
 
     /**
      * Load file to the object
@@ -44,9 +45,10 @@ interface CaseImporterProviderService
 
     /**
      * Check that file could be parsed by that DataProvider
-     * @return bool
+     * @throws ImporterException
+     * @throws InconsistentDataException
      */
-    public function check(): bool;
+    public function check(): void;
 
     /**
      * Load parsed data as array

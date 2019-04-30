@@ -17,12 +17,10 @@
 namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\mcCore\App\Accident;
-
 interface CaseImporter
 {
     public const DISC_IMPORTS = 'imports';
     public const CASES_FOLDERS = 'cases';
 
-    public function import(string $path): Accident;
+    public function import(string $path): void;
 }
