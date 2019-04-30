@@ -24,10 +24,9 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use medcenter24\mcCore\App\Helpers\ConverterHelper;
 use medcenter24\mcCore\App\Helpers\FileHelper;
-use medcenter24\McImport\Services\CaseImporterService;
+use medcenter24\McImport\Contract\CaseImporter;
 use medcenter24\McImport\Services\ImporterException;
 use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\PhpWord;
 use PhpOffice\PhpWord\Shared\OLERead;
 use SplFileInfo;
 
@@ -49,19 +48,14 @@ class ImportCasesCommand extends Command
      */
     protected $description = 'Import of the cases (to load a lot of local files instead of GUI importer)';
 
-    public function handle(CaseImporterService $importerService): void
+    public function handle(CaseImporter $importerService): void
     {
-        $path = (string)$this->option('path');
-        while (empty($path)) {
-            $path = (string)$this->ask('Path to directory with cases:');
-        }
-        // $this->runImporter($path);
+        $path = $this->getPath();
 
         $this->info('Chosen path: ' . $path . '');
 
         $totalSizeBytes = FileHelper::getSize($path, ['doc', 'docx']);
         $totalFilesCount = FileHelper::filesCount($path, ['doc', 'docx']);
-
 
         if ( $this->confirm('Will be imported ' . ConverterHelper::formatBytes($totalSizeBytes).' from '.$totalFilesCount.' file(s)', true) ) {
             $bar = $this->output->createProgressBar($totalFilesCount);
@@ -78,6 +72,8 @@ class ImportCasesCommand extends Command
                 $filename = $fileInfo->getFilename();
                 $last = mb_strcut($filename, -4);
                 $path = '';
+
+                // todo move all these selectors to doc provider (which will convert doc to docx) and to docx provider which works already, after that provider->check could decide to overwork this file
                 if ($last === '.doc') {
                     try {
                         $path = $self->convertFromDocToDocx($fileInfo);
@@ -133,13 +129,24 @@ class ImportCasesCommand extends Command
                 $headers = ['Path', 'Message'];
                 $this->table($headers, $notImported);
             }
-            
+
             if ($errorsCount) {
                 $this->error('Was not imported ' . $errorsCount . ' of ' . $totalFilesCount . ' case(s). Check log now to review them.');
+            } else {
+                $this->info('Import of the ' . $totalFilesCount . ' case(s) finished with SUCCESS status.');
             }
         } else {
             $this->error('Stopped');
         }
+    }
+
+    private function getPath(): string
+    {
+        $path = (string)$this->option('path');
+        while (empty($path)) {
+            $path = (string)$this->ask('Path to directory with cases:');
+        }
+        return $path;
     }
 
     /**

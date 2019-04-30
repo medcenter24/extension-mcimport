@@ -38,9 +38,8 @@ abstract class DataServiceProviderService implements CaseImporterProviderService
 
     /**
      * Check that file could be parsed by that DataProvider
-     * @return bool
      */
-    abstract public function check(): bool;
+    abstract public function check(): void;
 
     /**
      * Load parsed data as array
@@ -53,7 +52,6 @@ abstract class DataServiceProviderService implements CaseImporterProviderService
 
     /**
      * Store case (accident) to data base
-     * @return bool
      */
-    abstract public function import(): bool;
+    abstract public function import(): void;
 }
