@@ -16,42 +16,34 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services;
+namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\McImport\Contract\CaseImporterProviderService;
+use DOMDocument;
 
-abstract class DataServiceProviderService implements CaseImporterProviderService
+interface DocxReaderService
 {
     /**
-     * @var array
+     * Load file for reading
+     * @return mixed
      */
-    protected $data = [];
+    public function load(): self;
 
     /**
-     * Load file to data provider
-     *
-     * @param string $path
-     * @return self
+     * Object with parsed body
+     * @return mixed
      */
-    abstract public function load(string $path = ''): CaseImporterProviderService;
+    public function getDom(): DOMDocument;
 
     /**
-     * Check that file could be parsed by that DataProvider
+     * Get all text from the document
+     * @return string
      */
-    abstract public function check(): void;
+    public function getText(): string;
 
     /**
-     * Load parsed data as array
-     * @return array
+     * File path
+     * @return string
      */
-    public function getData(): array
-    {
-        return $this->data;
-    }
-
-    /**
-     * Store case (accident) to data base
-     */
-    abstract public function import(): void;
+    public function getFilePath(): string;
 }
