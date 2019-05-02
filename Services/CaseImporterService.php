@@ -20,6 +20,7 @@ namespace medcenter24\McImport\Services;
 
 
 use medcenter24\mcCore\App\Accident;
+use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\mcCore\App\Support\Core\Configurable;
 use medcenter24\McImport\Contract\CaseImporter;
 
@@ -32,6 +33,8 @@ class CaseImporterService extends Configurable implements CaseImporter
     /**
      *
      * @param string $path path to the importing file source
+     * @throws ImporterException
+     * @throws InconsistentDataException
      */
     public function import(string $path): void
     {

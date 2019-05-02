@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" ?>
+
+<!--
+  ~ This program is free software; you can redistribute it and/or
+  ~ modify it under the terms of the GNU General Public License
+  ~ as published by the Free Software Foundation; under version 2
+  ~ of the License (non-upgradable).
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU General Public License for more details.
+  ~ You should have received a copy of the GNU General Public License
+  ~ along with this program; if not, write to the Free Software
+  ~ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+  ~
+  ~ Copyright (c) 2019 (original work) MedCenter24.com;
+  -->
+
+<main xml="something" tag="another">
+    <div marker="1">
+        <div marker="2">
+            <div marker="3">
+                <text-tag>
+
+                    Something very that I need to get
+
+                    <span>Another text, stripped from main</span>
+
+                    <div>
+                        <div>
+                            <table>
+                                <tr>
+                                    <th>key1</th>
+                                    <th>key2</th>
+                                </tr>
+                                <tr>
+                                    <td>val1.1</td>
+                                    <td>val2.1</td>
+                                </tr>
+                                <tr>
+                                    <td>val1.2</td>
+                                    <td>val2.2</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </text-tag>
+            </div>
+        </div>
+    </div>
+    <div marker="4">
+        <div marker="5">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>User FirstName</th>
+                        <th>User LastName</th>
+                        <th>ID</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Foster</td>
+                        <td>Abigail</td>
+                        <td>1</td>
+                        <td><btn>Delete</btn></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</main>

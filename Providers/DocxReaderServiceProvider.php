@@ -16,42 +16,35 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services;
+namespace medcenter24\McImport\Providers;
 
+use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
+use medcenter24\McImport\Contract\DocxReaderService;
+use medcenter24\mcImport\Services\DocxReader\SimpleDocxReaderService;
 
-use medcenter24\McImport\Contract\CaseImporterProviderService;
-
-abstract class DataServiceProviderService implements CaseImporterProviderService
+class DocxReaderServiceProvider extends ServiceProvider
 {
     /**
-     * @var array
-     */
-    protected $data = [];
-
-    /**
-     * Load file to data provider
+     * Called before routes are registered.
      *
-     * @param string $path
-     * @return self
+     * Register any model bindings or pattern based filters.
+     *
+     * @return void
      */
-    abstract public function load(string $path = ''): CaseImporterProviderService;
-
-    /**
-     * Check that file could be parsed by that DataProvider
-     */
-    abstract public function check(): void;
-
-    /**
-     * Load parsed data as array
-     * @return array
-     */
-    public function getData(): array
+    public function boot(): void
     {
-        return $this->data;
+        parent::boot();
     }
 
     /**
-     * Store case (accident) to data base
+     * Register the application services.
+     *
+     * @return void
      */
-    abstract public function import(): void;
+    public function register(): void
+    {
+        $this->app->bind(DocxReaderService::class, static function() {
+            return new SimpleDocxReaderService();
+        });
+    }
 }

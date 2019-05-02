@@ -41,7 +41,7 @@ interface CaseImporterProviderService
      * @param string $path
      * @return CaseImporterProviderService
      */
-    public function load($path = ''): self;
+    public function load(string $path = ''): self;
 
     /**
      * Check that file could be parsed by that DataProvider
