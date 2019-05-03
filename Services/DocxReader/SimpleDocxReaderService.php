@@ -16,18 +16,14 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\mcImport\Services\DocxReader;
+namespace medcenter24\McImport\Services\DocxReader;
 
 
 use DOMDocument;
 use Illuminate\Support\Facades\Log;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\McImport\Contract\DocxReaderService;
-use medcenter24\McImport\Services\ImporterException;
-use PhpOffice\PhpWord\IOFactory;
-use PhpOffice\PhpWord\Shared\OLERead;
 use ZipArchive;
-use \PhpOffice\PhpWord\Exception\Exception as OfficeException;
 
 /**
  * Very simple driver for reading of the docx files
@@ -73,7 +69,6 @@ class SimpleDocxReaderService implements DocxReaderService
 
     /**
      * dom as it is
-     * @return DOMDocument
      */
     public function getDom(): DOMDocument
     {
@@ -184,35 +179,5 @@ class SimpleDocxReaderService implements DocxReaderService
 
         // In case of failure return empty string
         return $files;
-    }
-
-    /**
-     * Converts from old format .doc to new .docx
-     * @param string $docPath
-     * @return string
-     * @throws ImporterException
-     * @throws OfficeException
-     */
-    public function convertFromDoc(string $docPath): string
-    {
-        // Check if file exists and is readable
-        if (!is_readable($docPath)) {
-            throw new ImporterException('Could not open ' . $docPath . ' for reading! File does not exist, or it is not readable.');
-        }
-
-        // Get the file identifier
-        // Don't bother reading the whole file until we know it's a valid OLE file
-        $data = file_get_contents($docPath, false, null, 0, 8);
-
-        // Check OLE identifier
-        if ($data !== OLERead::IDENTIFIER_OLE) {
-            throw new ImporterException('The filename ' . $docPath . ' is not recognised as an OLE file (probably tmp doc file were saved, ignore it)');
-        }
-
-        $phpWord = IOFactory::load($docPath, 'MsDoc');
-        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-        $docPath .= '.docx';
-        $objWriter->save($docPath);
-        return $docPath;
     }
 }

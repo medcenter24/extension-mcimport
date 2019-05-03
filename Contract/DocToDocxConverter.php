@@ -16,34 +16,19 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Providers;
+namespace medcenter24\McImport\Contract;
 
-use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Contract\DocxReaderService;
-use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
-
-class DocxReaderServiceProvider extends ServiceProvider
+/**
+ * MsDoc to Word2007 converter
+ * Interface DocToDocxConverter
+ * @package medcenter24\McImport\Contract
+ */
+interface DocToDocxConverter
 {
     /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
-     *
-     * @return void
+     * @param string $docPath
+     * @param string $toDocxPath
+     * @return string
      */
-    public function boot(): void
-    {
-    }
-
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        $this->app->bind(DocxReaderService::class, static function() {
-            return new SimpleDocxReaderService();
-        });
-    }
+    public function convert (string $docPath, string $toDocxPath = ''): string;
 }
