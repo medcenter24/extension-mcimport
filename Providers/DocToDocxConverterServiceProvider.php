@@ -19,10 +19,10 @@
 namespace medcenter24\McImport\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Contract\DocxReaderService;
-use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
+use medcenter24\McImport\Contract\DocToDocxConverter;
+use medcenter24\McImport\Services\DocxReader\DocToDocxConverterService;
 
-class DocxReaderServiceProvider extends ServiceProvider
+class DocToDocxConverterServiceProvider extends ServiceProvider
 {
     /**
      * Called before routes are registered.
@@ -42,8 +42,8 @@ class DocxReaderServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(DocxReaderService::class, static function() {
-            return new SimpleDocxReaderService();
+        $this->app->bind(DocToDocxConverter::class, static function() {
+            return new DocToDocxConverterService();
         });
     }
 }

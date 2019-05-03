@@ -16,7 +16,7 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\mcImport\Tests\Unit\DocxParser;
+namespace medcenter24\McImport\Tests\Unit\DocxParser;
 
 use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
 use RecursiveDirectoryIterator;
