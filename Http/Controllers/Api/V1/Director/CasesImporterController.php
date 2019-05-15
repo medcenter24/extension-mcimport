@@ -94,7 +94,8 @@ class CasesImporterController extends ApiController
     public function import($id): Response
     {
         $path = $this->uploaderService->getPathById($id);
-        $accident = $this->importerService->import($path);
+        $this->importerService->import($path);
+        $accident = current($this->importerService->getLastImported());
         $this->uploaderService->delete($id);
 
         return $this->response->accepted(
