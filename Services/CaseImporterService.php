@@ -42,7 +42,7 @@ class CaseImporterService extends Configurable implements CaseImporter
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
             if ($registeredProvider->load($path)->check()) {
                 $registeredProvider->import();
-                $this->lastImportedAccident = $registeredProvider->getLastAccident();
+                $this->lastImportedAccident = $registeredProvider->getAccident();
                 break;
             }
         }
@@ -51,5 +51,13 @@ class CaseImporterService extends Configurable implements CaseImporter
     public function getLastImportedAccidents(): Accident
     {
         return $this->lastImportedAccident;
+    }
+
+    public function getImportableExtensions(): array {
+        $ext = [];
+        foreach ($this->getOption(self::OPTION_PROVIDERS) as $provider) {
+            $ext = array_merge($ext, $provider->getFileExtensions());
+        }
+        return $ext;
     }
 }

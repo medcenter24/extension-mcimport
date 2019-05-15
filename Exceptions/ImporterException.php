@@ -16,17 +16,11 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services;
+namespace medcenter24\McImport\Exceptions;
 
 
-use Exception;
-use Throwable;
+use medcenter24\mcCore\App\Exceptions\CommonException;
 
-class ImporterException extends Exception
+class ImporterException extends CommonException
 {
-    public function __construct($message = '', $code = 0, Throwable $previous = null)
-    {
-        parent::__construct($message, $code, $previous);
-        \Log::error($message);
-    }
 }
