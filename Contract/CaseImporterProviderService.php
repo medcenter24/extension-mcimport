@@ -21,7 +21,7 @@ namespace medcenter24\McImport\Contract;
 
 use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
-use medcenter24\McImport\Services\ImporterException;
+use medcenter24\McImport\Exceptions\ImporterException;
 
 interface CaseImporterProviderService
 {
@@ -55,4 +55,11 @@ interface CaseImporterProviderService
      * @return array
      */
     public function getData(): array;
+
+    /**
+     * Each import provider should work with defined type of files
+     * we can determine them by a file extension
+     * @return array
+     */
+    public function getFileExtensions(): array;
 }

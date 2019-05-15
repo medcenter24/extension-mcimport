@@ -22,5 +22,15 @@ interface CaseImporter
     public const DISC_IMPORTS = 'imports';
     public const CASES_FOLDERS = 'cases';
 
+    /**
+     * Import a file
+     * @param string $path
+     */
     public function import(string $path): void;
+
+    /**
+     * Which files could be imported
+     * @return array
+     */
+    public function getImportableExtensions(): array;
 }
