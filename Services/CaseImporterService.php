@@ -20,19 +20,36 @@ namespace medcenter24\McImport\Services;
 
 
 use medcenter24\mcCore\App\Accident;
+use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
+use medcenter24\mcCore\App\Support\Core\Configurable;
 use medcenter24\McImport\Contract\CaseImporter;
-use medcenter24\McImport\Contract\CaseImporterProviderService;
 
-class CaseImporterService implements CaseImporter
+class CaseImporterService extends Configurable implements CaseImporter
 {
-    public function import(string $path): Accident
-    {
-        // get Docx from the storage and run importer
-        /** @var CaseImporterService $provider */
-        $provider = resolve(CaseImporterProviderService::class);
-        $provider->load($path);
-        $provider->import();
+    public const OPTION_PROVIDERS = 'providers';
 
-        return $provider->getLastAccident();
+    private $lastImportedAccident;
+
+    /**
+     *
+     * @param string $path path to the importing file source
+     * @throws ImporterException
+     * @throws InconsistentDataException
+     */
+    public function import(string $path): void
+    {
+        /** @var DataServiceProviderService $registeredProvider */
+        foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
+            if ($registeredProvider->load($path)->check()) {
+                $registeredProvider->import();
+                $this->lastImportedAccident = $registeredProvider->getLastAccident();
+                break;
+            }
+        }
+    }
+
+    public function getLastImportedAccidents(): Accident
+    {
+        return $this->lastImportedAccident;
     }
 }
