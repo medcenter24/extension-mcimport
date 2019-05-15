@@ -7,8 +7,7 @@
     "order": 0,
     "providers": [
         "medcenter24\\McImport\\Providers\\McImportServiceProvider",
-        "medcenter24\\McImport\\Providers\\DocxReaderServiceProvider",
-        "medcenter24\\McImport\\Providers\\DocToDocxConverterServiceProvider"
+        "medcenter24\\McImport\\Providers\\DocxReaderServiceProvider"
     ],
     "aliases": {},
     "files": [],
