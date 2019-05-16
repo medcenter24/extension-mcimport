@@ -60,7 +60,7 @@ class CaseImporterService extends Configurable implements CaseImporter
                 'file' => $path,
                 'errors' => $importErrors,
             ]);
-            throw new ImporterException('There are no providers to import this doc OR there are errors in the content (you can check out the log).');
+            throw new ImporterException(current($importErrors));
         }
     }
 
