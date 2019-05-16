@@ -17,6 +17,8 @@
 namespace medcenter24\McImport\Contract;
 
 
+use medcenter24\mcCore\App\Accident;
+
 interface CaseImporter
 {
     public const DISC_IMPORTS = 'imports';
@@ -33,4 +35,9 @@ interface CaseImporter
      * @return array
      */
     public function getImportableExtensions(): array;
+
+    /**
+     * @return Accident
+     */
+    public function getLastImportedAccident(): ?Accident;
 }

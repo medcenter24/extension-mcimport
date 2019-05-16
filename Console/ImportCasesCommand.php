@@ -29,7 +29,7 @@ use SplFileInfo;
 
 /**
  * Example
- * php artisan import:path --path="/Users/MedCenter/documents/cases" --show-not-imported=1
+ * php artisan importer:path --path="/Users/MedCenter/documents/cases" --show-not-imported=1
  * Class ImportCasesCommand
  * @package medcenter24\McImport\Console
  */
@@ -75,7 +75,6 @@ class ImportCasesCommand extends Command
 
                 if ($path) {
                     try {
-                        // return Accident if needed
                         $importerService->import($path);
                     } catch (CommonException $e) {
                         $error = ['path' => $fileInfo->getRealPath(), 'error' => $e->getMessage()];
@@ -104,6 +103,7 @@ class ImportCasesCommand extends Command
                 $this->table($headers, $notImported);
             }
 
+            $this->info("\n");
             if ($errorsCount) {
                 $this->error('Was not imported ' . $errorsCount . ' of ' . $totalFilesCount . ' case(s). Check log now to review them.');
             } else {

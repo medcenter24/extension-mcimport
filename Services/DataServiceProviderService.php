@@ -19,7 +19,9 @@
 namespace medcenter24\McImport\Services;
 
 
+use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\McImport\Contract\CaseImporterProviderService;
+use medcenter24\McImport\Exceptions\ImporterException;
 
 abstract class DataServiceProviderService implements CaseImporterProviderService
 {
@@ -38,6 +40,8 @@ abstract class DataServiceProviderService implements CaseImporterProviderService
 
     /**
      * Check that file could be parsed by that DataProvider
+     * @throws ImporterException
+     * @throws InconsistentDataException
      */
     abstract public function check(): void;
 
