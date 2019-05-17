@@ -6,7 +6,8 @@
     "active": 1,
     "order": 0,
     "providers": [
-        "medcenter24\\McImport\\Providers\\McImportServiceProvider"
+        "medcenter24\\McImport\\Providers\\McImportServiceProvider",
+        "medcenter24\\McImport\\Providers\\DocxReaderServiceProvider"
     ],
     "aliases": {},
     "files": [],

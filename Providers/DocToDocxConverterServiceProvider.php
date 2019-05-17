@@ -16,35 +16,34 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
+namespace medcenter24\McImport\Providers;
 
-namespace App\Services\Import;
+use Illuminate\Support\ServiceProvider;
+use medcenter24\McImport\Contract\DocToDocxConverter;
+use medcenter24\McImport\Services\DocxReader\DocToDocxConverterService;
 
-
-use App\Support\Core\Configurable;
-use Illuminate\Support\Facades\Log;
-
-class Importer extends Configurable
+class DocToDocxConverterServiceProvider extends ServiceProvider
 {
-
-    public function import($path = ''): void
+    /**
+     * Called before routes are registered.
+     *
+     * Register any model bindings or pattern based filters.
+     *
+     * @return void
+     */
+    public function boot(): void
     {
-        foreach ($this->getOption('registeredDataProviders') as $registeredProvider) {
+    }
 
-            if ($provider = $registeredProvider->load($path)->check()) {
-
-                Log::debug('Provider has matched path', [
-                    'provider' => $registeredProvider,
-                    'path' => $path
-                ]);
-
-                $provider->import();
-            } else {
-
-                Log::debug('Provider does not match to path', [
-                    'provider' => $registeredProvider,
-                    'path' => $path
-                ]);
-            }
-        }
+    /**
+     * Register the application services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        $this->app->bind(DocToDocxConverter::class, static function() {
+            return new DocToDocxConverterService();
+        });
     }
 }

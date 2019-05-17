@@ -16,17 +16,34 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace App\Services\Import;
+namespace medcenter24\McImport\Providers;
 
+use Illuminate\Support\ServiceProvider;
+use medcenter24\McImport\Contract\DocxReaderService;
+use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
 
-use Exception;
-use Throwable;
-
-class ImporterException extends Exception
+class DocxReaderServiceProvider extends ServiceProvider
 {
-    public function __construct($message = "", $code = 0, Throwable $previous = null)
+    /**
+     * Called before routes are registered.
+     *
+     * Register any model bindings or pattern based filters.
+     *
+     * @return void
+     */
+    public function boot(): void
     {
-        parent::__construct($message, $code, $previous);
-        \Log::error($message);
+    }
+
+    /**
+     * Register the application services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        $this->app->bind(DocxReaderService::class, static function() {
+            return new SimpleDocxReaderService();
+        });
     }
 }

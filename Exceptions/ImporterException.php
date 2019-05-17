@@ -4,6 +4,7 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -11,33 +12,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Contract;
+namespace medcenter24\McImport\Exceptions;
 
 
-use medcenter24\mcCore\App\Accident;
+use medcenter24\mcCore\App\Exceptions\CommonException;
 
-interface CaseImporter
+class ImporterException extends CommonException
 {
-    public const DISC_IMPORTS = 'imports';
-    public const CASES_FOLDERS = 'cases';
-
-    /**
-     * Import a file
-     * @param string $path
-     */
-    public function import(string $path): void;
-
-    /**
-     * Which files could be imported
-     * @return array
-     */
-    public function getImportableExtensions(): array;
-
-    /**
-     * @return Accident
-     */
-    public function getLastImportedAccident(): ?Accident;
 }
