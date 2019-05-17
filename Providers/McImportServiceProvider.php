@@ -4,6 +4,7 @@ namespace medcenter24\McImport\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
+use medcenter24\McImport\Console\ImportCasesCommand;
 
 class McImportServiceProvider extends ServiceProvider
 {
@@ -12,7 +13,7 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot()
+    public function boot(): void
     {
         $this->registerTranslations();
         $this->registerConfig();
@@ -26,9 +27,12 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function register()
+    public function register(): void
     {
         $this->app->register(RouteServiceProvider::class);
+        $this->commands([
+            ImportCasesCommand::class
+        ]);
     }
 
     /**
@@ -36,7 +40,7 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerConfig()
+    protected function registerConfig(): void
     {
         $this->publishes([
             __DIR__.'/../Config/config.php' => config_path('mcimport.php'),
@@ -51,7 +55,7 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerViews()
+    public function registerViews(): void
     {
         $viewPath = resource_path('views/modules/mcimport');
 
@@ -71,7 +75,7 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerTranslations()
+    public function registerTranslations(): void
     {
         $langPath = resource_path('lang/modules/mcimport');
 
@@ -87,7 +91,7 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function registerFactories()
+    public function registerFactories(): void
     {
         if (! app()->environment('production')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
@@ -99,7 +103,7 @@ class McImportServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return [];
     }

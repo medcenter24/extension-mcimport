@@ -16,39 +16,46 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace App\Services\Import;
+namespace medcenter24\McImport\Services;
 
 
-abstract class DataProvider
+use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
+use medcenter24\McImport\Contract\CaseImporterProviderService;
+use medcenter24\McImport\Exceptions\ImporterException;
+
+abstract class DataServiceProviderService implements CaseImporterProviderService
 {
-    private $data = false;
+    /**
+     * @var array
+     */
+    protected $data = [];
 
     /**
      * Load file to data provider
      *
      * @param string $path
-     * @return DataProvider | $this
+     * @return self
      */
-    abstract public function load($path = '');
+    abstract public function load(string $path = ''): CaseImporterProviderService;
 
     /**
      * Check that file could be parsed by that DataProvider
-     * @return bool
+     * @throws ImporterException
+     * @throws InconsistentDataException
      */
-    abstract public function check();
+    abstract public function check(): void;
 
     /**
      * Load parsed data as array
-     * @return array | false
+     * @return array
      */
-    public function getData()
+    public function getData(): array
     {
         return $this->data;
     }
 
     /**
      * Store case (accident) to data base
-     * @return bool
      */
-    abstract public function import();
+    abstract public function import(): void;
 }
