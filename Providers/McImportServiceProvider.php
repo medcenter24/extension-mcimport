@@ -93,7 +93,7 @@ class McImportServiceProvider extends ServiceProvider
      */
     public function registerFactories(): void
     {
-        if (! app()->environment('production')) {
+        if (! app()->environment('production') && class_exists('Faker\Factory')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
         }
     }
