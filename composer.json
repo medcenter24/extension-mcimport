@@ -3,7 +3,6 @@
     "license": "GPL-2.0-only",
     "type": "medcenter24-extension",
     "description": "Import processes and types.",
-    "version": "0.1.0",
     "keywords": ["medcenter24", "extension", "module", "package", "mcimport"],
     "authors": [
         {
