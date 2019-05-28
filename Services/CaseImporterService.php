@@ -40,6 +40,9 @@ class CaseImporterService extends Configurable implements CaseImporter
     {
         $imported = false;
         $importErrors = [];
+        if (!$this->hasOption(self::OPTION_PROVIDERS)) {
+            throw new ImporterException('Import providers not configured');
+        }
         /** @var DataServiceProviderService $registeredProvider */
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
             try {

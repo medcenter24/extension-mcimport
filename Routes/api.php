@@ -51,10 +51,6 @@ $api->group([
                     $api->get('importer', CasesImporterController::class . '@uploads');
                     $api->put('importer/{id}', CasesImporterController::class . '@import');
                     $api->delete('importer/{id}', CasesImporterController::class . '@destroy');
-
-                    /*$api->group(['prefix' => 'importer'], static function (Router $api) {
-
-                    });*/
                 });
             });
         });
