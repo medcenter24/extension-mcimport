@@ -12,5 +12,4 @@
 */
 
 Route::prefix('mcimport')->group(function() {
-    Route::get('/', 'McImportController@index');
 });
