@@ -20,7 +20,6 @@ namespace medcenter24\McImport\Console;
 
 
 use Illuminate\Console\Command;
-use Illuminate\Support\Facades\Log;
 use medcenter24\mcCore\App\Exceptions\CommonException;
 use medcenter24\mcCore\App\Helpers\ConverterHelper;
 use medcenter24\mcCore\App\Helpers\FileHelper;
@@ -41,7 +40,8 @@ class ImportCasesCommand extends Command
      * @var string
      */
     protected $signature = 'importer:path {--path= : Path to the directory with files;}
-        {--show-not-imported= : Documents which can not be imported;}';
+        {--show-not-imported= : Documents which can not be imported;}
+        {--vvv= : Show detailed reports}';
 
     /**
      * The console command description.
@@ -57,8 +57,9 @@ class ImportCasesCommand extends Command
         $this->info('Chosen path: ' . $path . '');
 
         $fileExtensions = $importerService->getImportableExtensions();
-        $totalSizeBytes = FileHelper::getSize($path, $fileExtensions);
-        $totalFilesCount = FileHelper::filesCount($path, $fileExtensions);
+        $excludeRules = ['startsWith' => '~$'];
+        $totalSizeBytes = FileHelper::getSize($path, $fileExtensions, $excludeRules);
+        $totalFilesCount = FileHelper::filesCount($path, $fileExtensions, $excludeRules);
 
         if ( $this->confirm('Will be imported ' . ConverterHelper::formatBytes($totalSizeBytes).' from '.$totalFilesCount.' file(s)', true) ) {
             $bar = $this->output->createProgressBar($totalFilesCount);
@@ -70,15 +71,21 @@ class ImportCasesCommand extends Command
             $notImported = [];
 
             FileHelper::mapFiles($path, static function(SplFileInfo $fileInfo) use ($bar, $importerService, &$errorsCount, $self, &$notImported) {
-                $converted = false;
+
                 $path = $fileInfo->getRealPath();
 
                 if ($path) {
                     try {
                         $importerService->import($path);
                     } catch (CommonException $e) {
-                        $error = ['path' => $fileInfo->getRealPath(), 'error' => $e->getMessage()];
-                        Log::alert('Case not imported. ', $error);
+                        $error = [
+                            'path' => $fileInfo->getRealPath(),
+                            'error' => $e->getMessage(),
+                        ];
+                        if ($self->hasOption('vvv')) {
+                            $details = $importerService->getOption(CaseImporter::OPTION_ERRORS);
+                            $error['details'] = $self->prepareDetails($details);
+                        }
                         if ($self->hasOption('show-not-imported') && $self->option('show-not-imported')) {
                             $notImported[] = $error;
                         }
@@ -87,12 +94,7 @@ class ImportCasesCommand extends Command
                 }
 
                 $bar->advance();
-
-                if ($converted) {
-                    // delete converted file
-                    FileHelper::delete($path);
-                }
-            }, $fileExtensions);
+            }, $fileExtensions, $excludeRules);
 
             $bar->finish();
 
@@ -100,6 +102,9 @@ class ImportCasesCommand extends Command
                 $this->info("\n\n");
                 $this->alert('Not Imported files');
                 $headers = ['Path', 'Message'];
+                if ($self->hasOption('vvv')) {
+                    $headers[] = 'Details';
+                }
                 $this->table($headers, $notImported);
             }
 
@@ -112,6 +117,11 @@ class ImportCasesCommand extends Command
         } else {
             $this->error('Stopped');
         }
+    }
+
+    private function prepareDetails(array $details): string
+    {
+        return print_r($details, 1);
     }
 
     private function getPath(): string

@@ -19,7 +19,6 @@
 namespace medcenter24\McImport\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Contract\DocxReaderService;
 use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
 
 class DocxReaderServiceProvider extends ServiceProvider
@@ -42,7 +41,7 @@ class DocxReaderServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(DocxReaderService::class, static function() {
+        $this->app->bind(__CLASS__, static function() {
             return new SimpleDocxReaderService();
         });
     }

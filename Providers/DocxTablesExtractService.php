@@ -11,30 +11,31 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Contract;
+namespace medcenter24\McImport\Providers;
 
 
-use medcenter24\mcCore\App\Support\Core\ConfigurableInterface;
+use Illuminate\Support\ServiceProvider;
+use medcenter24\mcCore\App\Services\ExtractTableFromArrayService;
 
-interface CaseImporter extends ConfigurableInterface
+class DocxTablesExtractService extends ServiceProvider
 {
     /**
-     * Import a file
-     * @param string $path
+     * Register the application services.
+     *
+     * @return void
      */
-    public function import(string $path): void;
-
-    /**
-     * Which files could be imported
-     * @return array
-     */
-    public function getImportableExtensions(): array;
-
-    /**
-     * @return array [] of Accidents
-     */
-    public function getImportedAccidents(): array;
+    public function register(): void
+    {
+        $this->app->bind(__CLASS__, static function() {
+            return new ExtractTableFromArrayService([
+                ExtractTableFromArrayService::CONFIG_TABLE => ['w:tbl'],
+                ExtractTableFromArrayService::CONFIG_ROW => ['w:tr'],
+                ExtractTableFromArrayService::CONFIG_CEIL => ['w:tc'],
+            ]);
+        });
+    }
 }

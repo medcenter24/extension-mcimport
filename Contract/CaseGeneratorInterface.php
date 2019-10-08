@@ -11,30 +11,16 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
 namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\mcCore\App\Support\Core\ConfigurableInterface;
+use medcenter24\mcCore\App\Accident;
 
-interface CaseImporter extends ConfigurableInterface
+interface CaseGeneratorInterface
 {
-    /**
-     * Import a file
-     * @param string $path
-     */
-    public function import(string $path): void;
-
-    /**
-     * Which files could be imported
-     * @return array
-     */
-    public function getImportableExtensions(): array;
-
-    /**
-     * @return array [] of Accidents
-     */
-    public function getImportedAccidents(): array;
+    public function createCase(CaseImporterDataProvider $dataProvider): Accident;
 }

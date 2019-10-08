@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,20 +15,29 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services;
+namespace medcenter24\McImport\Services\CaseImporter;
 
 
 use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\Exceptions\CommonException;
 use medcenter24\mcCore\App\Support\Core\Configurable;
+use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporter;
+use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\ImporterException;
 
 class CaseImporterService extends Configurable implements CaseImporter
 {
-    public const OPTION_PROVIDERS = 'providers';
+    public const DISC_IMPORTS = 'imports';
+    public const CASES_FOLDERS = 'cases';
 
-    private $lastImportedAccident;
+    public const OPTION_PROVIDERS = 'providers';
+    public const OPTION_CASE_GENERATOR = 'case_generator';
+
+    /**
+     * List of imported cases (id of Accidents)
+     * @var array
+     */
+    private $importedAccidents = [];
 
     /**
      *
@@ -39,49 +47,61 @@ class CaseImporterService extends Configurable implements CaseImporter
     public function import(string $path): void
     {
         $imported = false;
-        $importErrors = [];
         if (!$this->hasOption(self::OPTION_PROVIDERS)) {
             throw new ImporterException('Import providers not configured');
         }
-        /** @var DataServiceProviderService $registeredProvider */
+
+        if (!$this->hasOption(self::OPTION_CASE_GENERATOR)) {
+            throw new ImporterException('Case Generator not configured');
+        }
+
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
-            try {
-                $registeredProvider->load($path)->check();
-            } catch (CommonException $e) {
-                // maybe other providers could make that
-                $importErrors[] = $e->getMessage();
-                continue;
+            /** @var CaseImporterDataProvider $provider */
+            $provider = new $registeredProvider;
+            $provider->init($path);
+            if ($provider->isFit()) {
+                /** @var Accident $accident */
+                $accident = $this->createCase($registeredProvider);
+                $this->importedAccidents[] = $accident->getAttribute('id');
+                $imported = true;
+                break;
             }
-            $registeredProvider->import();
-            $this->lastImportedAccident = $registeredProvider->getAccident();
-            $imported = true;
-            break;
         }
 
         if (!$imported) {
             logger('File can not be imported', [
                 'file' => $path,
-                'errors' => $importErrors,
             ]);
-            throw new ImporterException(current($importErrors));
+            throw new ImporterException('Not Imported');
         }
     }
 
     /**
-     * @return Accident
+     * @return array Accident
      */
-    public function getLastImportedAccident(): ?Accident
+    public function getImportedAccidents(): array
     {
-        return $this->lastImportedAccident;
+        return $this->importedAccidents;
     }
 
+    /**
+     * @return array
+     */
     public function getImportableExtensions(): array {
         $ext = [];
-        /** @var DataServiceProviderService $provider */
+        /** @var CaseImporterDataProvider $provider */
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $provider) {
             $ext[] = $provider->getFileExtensions();
         }
 
         return array_merge(...$ext);
+    }
+
+    private function createCase(CaseImporterDataProvider $dataProvider): Accident
+    {
+        $caseGeneratorClass = $this->getOption(self::OPTION_CASE_GENERATOR);
+        /** @var CaseGeneratorInterface $caseGenerator */
+        $caseGenerator = new $caseGeneratorClass;
+        return $caseGenerator->createCase($dataProvider);
     }
 }

@@ -21,29 +21,31 @@ namespace medcenter24\McImport\Contract;
 
 use DOMDocument;
 
-interface DocxReaderService
+/**
+ * Getting the base information from the docx file
+ * Interface DocxReader
+ * @package medcenter24\McImport\Contract
+ */
+interface DocumentReaderService
 {
     /**
-     * Load file for reading
-     * @return mixed
-     */
-    public function load(): self;
-
-    /**
      * Object with parsed body
+     * @param string $filename
      * @return mixed
      */
-    public function getDom(): DOMDocument;
+    public function getDom(string $filename): DOMDocument;
 
     /**
      * Get all text from the document
+     * @param string $filename
      * @return string
      */
-    public function getText(): string;
+    public function getText(string $filename): string;
 
     /**
-     * File path
-     * @return string
+     * Load images from the docx
+     * @param string $filename
+     * @return array
      */
-    public function getFilePath(): string;
+    public function getImages(string $filename): array;
 }
