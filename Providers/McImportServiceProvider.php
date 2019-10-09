@@ -17,6 +17,7 @@
 
 namespace medcenter24\McImport\Providers;
 
+use Config;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use medcenter24\McImport\Console\ImportCasesCommand;
@@ -82,7 +83,7 @@ class McImportServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
             return $path . '/modules/mcimport';
-        }, \Config::get('view.paths')), [$sourcePath]), 'mcimport');
+        }, Config::get('view.paths')), [$sourcePath]), 'mcimport');
     }
 
     /**
@@ -108,18 +109,8 @@ class McImportServiceProvider extends ServiceProvider
      */
     public function registerFactories(): void
     {
-        if (! app()->environment('production') && class_exists('Faker\Factory')) {
+        if ( class_exists('Faker\Factory') && !app()->environment('production')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
         }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides(): array
-    {
-        return [];
     }
 }

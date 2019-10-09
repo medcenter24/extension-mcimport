@@ -15,7 +15,12 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
+namespace medcenter24\McImport\Tests\Unit\CaseImporter;
+
+
+use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\Tests\TestCase;
+use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\ImporterException;
 use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
@@ -23,29 +28,42 @@ use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
 class CaseImporterServiceTest extends TestCase
 {
 
-    public function testGetFailedImportableExtensions(): void
+    public function testGetImportableExtensions(): void
     {
-        $dataProviderMock = $this->getMockClass(CaseImporterDataProvider::class);
-        $dataProviderMock->getFileExtensions()->willReturn(null);
+        $extensions = ['.doc', '.js', '.exe'];
+
+        $dataProviderMock = $this->getMockBuilder(CaseImporterDataProvider::class)->getMock();
+        $dataProviderMock->method('getFileExtensions')->willReturn($extensions);
+
+        $generatorMock = $this->getMockBuilder(CaseGeneratorInterface::class)->getMock();
+
+        $serviceMock = new CaseImporterService([
+            CaseImporterService::OPTION_PROVIDERS => [$dataProviderMock],
+            CaseImporterService::OPTION_CASE_GENERATOR => $generatorMock,
+        ]);
+        $ext = $serviceMock->getImportableExtensions();
+        self::assertSame($extensions, $ext);
     }
 
     /**
      * @throws ImporterException
      */
-    public function testGetImportableExtensions(): void
-    {
-        $dataProviderMock = $this->getMockBuilder(CaseImporterDataProvider::class)->getMock();
-        $dataProviderMock->method('getFileExtensions')->willReturn(['.doc', '.js', '.exe']);
-
-        $serviceMock = new CaseImporterService([
-            CaseImporterService::OPTION_PROVIDERS => [$dataProviderMock],
-            CaseImporterService::OPTION_CASE_GENERATOR =>
-        ]);
-        $serviceMock->import('');
-    }
-
     public function testImport(): void
     {
+        $dataProviderMock = $this->createMock(CaseImporterDataProvider::class);
+        $dataProviderMock->method('isFit')->willReturn(true);
 
+        $mockedAccident = $this->createMock(Accident::class);
+        $mockedAccident->method('getAttribute')->willReturn(1);
+
+        $generatorMock = $this->getMockBuilder(CaseGeneratorInterface::class)->getMock();
+        $generatorMock->method('createCase')->willReturn($mockedAccident);
+
+        $service = new CaseImporterService([
+            CaseImporterService::OPTION_PROVIDERS => [$dataProviderMock],
+            CaseImporterService::OPTION_CASE_GENERATOR => $generatorMock,
+        ]);
+        $service->import('$path');
+        self::assertSame([1], $service->getImportedAccidents());
     }
 }

@@ -30,9 +30,6 @@ class CaseImporterService extends Configurable implements CaseImporter
     public const DISC_IMPORTS = 'imports';
     public const CASES_FOLDERS = 'cases';
 
-    public const OPTION_PROVIDERS = 'providers';
-    public const OPTION_CASE_GENERATOR = 'case_generator';
-
     /**
      * List of imported cases (id of Accidents)
      * @var array
@@ -55,11 +52,10 @@ class CaseImporterService extends Configurable implements CaseImporter
             throw new ImporterException('Case Generator not configured');
         }
 
+        /** @var CaseImporterDataProvider $registeredProvider */
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
-            /** @var CaseImporterDataProvider $provider */
-            $provider = new $registeredProvider;
-            $provider->init($path);
-            if ($provider->isFit()) {
+            $registeredProvider->init($path);
+            if ($registeredProvider->isFit()) {
                 /** @var Accident $accident */
                 $accident = $this->createCase($registeredProvider);
                 $this->importedAccidents[] = $accident->getAttribute('id');
@@ -99,9 +95,7 @@ class CaseImporterService extends Configurable implements CaseImporter
 
     private function createCase(CaseImporterDataProvider $dataProvider): Accident
     {
-        $caseGeneratorClass = $this->getOption(self::OPTION_CASE_GENERATOR);
-        /** @var CaseGeneratorInterface $caseGenerator */
-        $caseGenerator = new $caseGeneratorClass;
+        $caseGenerator = $this->getOption(self::OPTION_CASE_GENERATOR);
         return $caseGenerator->createCase($dataProvider);
     }
 }

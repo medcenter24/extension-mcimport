@@ -167,7 +167,7 @@ abstract class DocxAbstract extends DataServiceProviderService
     /**
      * Initialize new file for import
      * @param string $path
-     * @return CaseImporterProviderService
+     * @return CaseImporterProviderService|DocxAbstract
      */
     public function load(string $path): CaseImporterProviderService
     {

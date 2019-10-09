@@ -21,6 +21,9 @@ use medcenter24\mcCore\App\Support\Core\ConfigurableInterface;
 
 interface CaseImporter extends ConfigurableInterface
 {
+    public const OPTION_PROVIDERS = 'providers';
+    public const OPTION_CASE_GENERATOR = 'case_generator';
+
     /**
      * Import a file
      * @param string $path

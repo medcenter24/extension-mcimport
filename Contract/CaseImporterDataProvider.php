@@ -18,7 +18,11 @@
 namespace medcenter24\McImport\Contract;
 
 
+use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\AccidentType;
+use medcenter24\mcCore\App\City;
+use medcenter24\mcCore\App\Doctor;
+use medcenter24\mcCore\App\FinanceCurrency;
 
 interface CaseImporterDataProvider
 {
@@ -50,7 +54,7 @@ interface CaseImporterDataProvider
 
     public function assistanceTitle(): string;
 
-    public function patientPoliceNumber(): string;
+    public function contacts(): string;
 
     public function patientName(): string;
 
@@ -72,11 +76,7 @@ interface CaseImporterDataProvider
 
     public function doctorDiagnostics(): string;
 
-    public function doctorGender(): string;
-
-    public function doctorName(): string;
-
-    public function doctorMedicalBoardNum(): string;
+    public function doctor(): Doctor;
 
     public function patientServices(): string;
 
@@ -87,4 +87,12 @@ interface CaseImporterDataProvider
     public function accidentType(): AccidentType;
 
     public function caseableType(): string;
+
+    public function parentAccident(): ?Accident;
+
+    public function city(): City;
+
+    public function hospitalId(): int;
+
+    public function currency(): FinanceCurrency;
 }
