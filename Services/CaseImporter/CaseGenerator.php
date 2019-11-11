@@ -34,7 +34,7 @@ use medcenter24\mcCore\App\Services\DoctorAccidentService;
 use medcenter24\mcCore\App\Services\HospitalAccidentService;
 use medcenter24\mcCore\App\Services\PatientService;
 use medcenter24\mcCore\App\Services\PaymentService;
-use medcenter24\mcCore\App\Services\ServiceLocatorTrait;
+use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 

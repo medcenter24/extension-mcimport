@@ -20,7 +20,6 @@ namespace medcenter24\McImport\Services\CaseImporter;
 
 use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\Support\Core\Configurable;
-use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporter;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\ImporterException;

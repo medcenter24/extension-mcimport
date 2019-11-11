@@ -18,14 +18,19 @@
 namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\AccidentType;
-use medcenter24\mcCore\App\City;
-use medcenter24\mcCore\App\Doctor;
-use medcenter24\mcCore\App\FinanceCurrency;
-
+/**
+ * Data provider returns source data only
+ * Everything else should create or update controllers or responsible service
+ * Interface CaseImporterDataProvider
+ * @package medcenter24\McImport\Contract
+ */
 interface CaseImporterDataProvider
 {
+    /**
+     * One of the markers
+     */
+    public const PARENT_ACCIDENT_MARKER_INTERNAL_REF_NUM = 'internal_ref_num';
+
     /**
      * Initialize data provider
      * @param string $path
@@ -48,51 +53,185 @@ interface CaseImporterDataProvider
 
     // ******* Case data *********//
 
-    public function internalRefNumber(): string;
+    /**
+     * Internal Ref Number
+     * @return string
+     */
+    public function getInternalRefNumber(): string;
 
-    public function externalRefNumber(): string;
+    /**
+     * External (Assistant) Ref Number
+     * @return string
+     */
+    public function getExternalRefNumber(): string;
 
-    public function assistanceTitle(): string;
+    /**
+     * Title of the assistant company
+     * @return string
+     */
+    public function getAssistantTitle(): string;
 
-    public function contacts(): string;
+    /**
+     * Address of the assistant company
+     * @return string
+     */
+    public function getAssistantAddress(): string;
 
-    public function patientName(): string;
+    /**
+     * Contacts or additional information about the patient
+     * @return string
+     */
+    public function getPatientContacts(): string;
 
-    public function patientBirthday(): string;
+    /**
+     * Name of the patient
+     * @return string
+     */
+    public function getPatientName(): string;
 
-    public function isFirstVisit(): bool;
+    /**
+     * Birthday of the patient
+     * @return string
+     */
+    public function getPatientBirthday(): string;
 
-    public function visitTime(): string;
+    /**
+     * Visit Time and Date
+     * @example string '2017-08-13 11:29:54'
+     * @return string
+     */
+    public function getVisitTime(): string;
 
-    public function visitPlace(): string;
+    /**
+     * Symptoms of the patient
+     * @return string
+     */
+    public function getPatientSymptoms(): string;
 
-    public function patientSymptoms(): string;
+    /**
+     * Additional investigation from the doctor
+     * @return string
+     */
+    public function getDoctorInvestigation(): string;
 
-    public function requestReason(): string;
+    /**
+     * Recommendation from the doctor to the patient
+     * @return string
+     */
+    public function getDoctorRecommendation(): string;
 
-    public function doctorInvestigation(): string;
+    /**
+     * List of diagnostics, that the doctor did
+     * @return array
+     * @example [
+     *  'title' => 'diagnosed name',
+     *  'category' => 'A00'
+     * ]
+     */
+    public function getDoctorDiagnostics(): array;
 
-    public function doctorRecommendation(): string;
+    /**
+     * Name of the doctor
+     * @return string
+     */
+    public function getDoctorName(): string;
 
-    public function doctorDiagnostics(): string;
+    /**
+     * Gender of the doctor
+     * @return string
+     */
+    public function getDoctorGender(): string;
 
-    public function doctor(): Doctor;
+    /**
+     * Doctors boarding number
+     * @return string
+     */
+    public function getDoctorMedicalBoardingNum(): string;
 
-    public function patientServices(): string;
+    /**
+     * Doctor services
+     * @return array
+     */
+    public function getDoctorServices(): array;
 
-    public function totalPrice(): string;
+    /**
+     * Total price of the case
+     * @return float
+     */
+    public function getTotalPrice(): float;
 
-    public function caseCreationDate(): string;
+    /**
+     * Date of the creation
+     * @return string
+     */
+    public function getCaseCreationDate(): string;
 
-    public function accidentType(): AccidentType;
+    /**
+     * Accident Type
+     * @example insurance or non-insurance
+     * @return string
+     */
+    public function getAccidentType(): string;
 
-    public function caseableType(): string;
+    /**
+     * Doctor or Hospital accident
+     * @example DoctorCase::class or HospitalCase::class
+     * @return string
+     */
+    public function getCaseableType(): string;
 
-    public function parentAccident(): ?Accident;
+    /**
+     * If we can get markers which allow us to define parent case
+     * @return array
+     */
+    public function getParentAccidentMarkers(): array;
 
-    public function city(): City;
+    /**
+     * Name of the city
+     * @return string
+     */
+    public function getCityTitle(): string;
 
-    public function hospitalId(): int;
+    /**
+     * Hospital name
+     * @return string
+     */
+    public function getHospitalTitle(): string;
 
-    public function currency(): FinanceCurrency;
+    /**
+     * Currency of the case
+     * @return string
+     */
+    public function getCurrency(): string;
+
+    /**
+     * @return string
+     */
+    public function getVisitDate(): string;
+
+    /**
+     * @return string
+     */
+    public function getVisitCountry(): string;
+
+    /**
+     * @return string
+     */
+    public function getVisitRegion(): string;
+
+    /**
+     * @return string
+     */
+    public function getVisitCity(): string;
+
+    /**
+     * @return array
+     */
+    public function getImages(): array;
+
+    /**
+     * If the case is the visit for the patient that has already been visited
+     * @return bool
+     */
+    public function isReappointment(): bool;
 }
