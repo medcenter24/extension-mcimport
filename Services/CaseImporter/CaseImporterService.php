@@ -20,6 +20,7 @@ namespace medcenter24\McImport\Services\CaseImporter;
 
 use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\Support\Core\Configurable;
+use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporter;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\ImporterException;
@@ -34,6 +35,11 @@ class CaseImporterService extends Configurable implements CaseImporter
      * @var array
      */
     private $importedAccidents = [];
+
+    /**
+     * @var array
+     */
+    private $errors = [];
 
     /**
      *
@@ -52,7 +58,11 @@ class CaseImporterService extends Configurable implements CaseImporter
         }
 
         /** @var CaseImporterDataProvider $registeredProvider */
+        $errors = [];
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
+            if ($this->getOption(self::OPTION_WITH_ERRORS)) {
+                $registeredProvider->setStoreErrors(true);
+            }
             $registeredProvider->init($path);
             if ($registeredProvider->isFit()) {
                 /** @var Accident $accident */
@@ -61,14 +71,22 @@ class CaseImporterService extends Configurable implements CaseImporter
                 $imported = true;
                 break;
             }
+
+            $errors[] = $registeredProvider->getErrors();
         }
 
         if (!$imported) {
+            $this->errors += $errors;
             logger('File can not be imported', [
                 'file' => $path,
             ]);
             throw new ImporterException('Not Imported');
         }
+    }
+
+    public function getErrors(): array
+    {
+        return $this->errors;
     }
 
     /**
@@ -89,11 +107,29 @@ class CaseImporterService extends Configurable implements CaseImporter
             $ext[] = $provider->getFileExtensions();
         }
 
-        return array_merge(...$ext);
+        return array_unique(array_merge(...$ext));
     }
 
+    /**
+     * @return array
+     */
+    public function getExcludeRules(): array {
+        $rules = [];
+        /** @var CaseImporterDataProvider $provider */
+        foreach ($this->getOption(self::OPTION_PROVIDERS) as $provider) {
+            $rules[] = $provider->getExcludeRules();
+        }
+
+        return array_unique(array_merge(...$rules));
+    }
+
+    /**
+     * @param CaseImporterDataProvider $dataProvider
+     * @return Accident
+     */
     private function createCase(CaseImporterDataProvider $dataProvider): Accident
     {
+        /** @var CaseGeneratorInterface $caseGenerator */
         $caseGenerator = $this->getOption(self::OPTION_CASE_GENERATOR);
         return $caseGenerator->createCase($dataProvider);
     }

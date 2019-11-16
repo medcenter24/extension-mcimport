@@ -21,8 +21,23 @@ use medcenter24\mcCore\App\Support\Core\ConfigurableInterface;
 
 interface CaseImporter extends ConfigurableInterface
 {
+    /**
+     * DataProviders that can read source files
+     * The list of the CaseImporterDataProvider
+     */
     public const OPTION_PROVIDERS = 'providers';
+
+    /**
+     * Generators that can create cases according to read the data by providers
+     * CaseGeneratorInterface
+     */
     public const OPTION_CASE_GENERATOR = 'case_generator';
+
+    /**
+     * Boolean option - to store or not an imports errors
+     * bool
+     */
+    public const OPTION_WITH_ERRORS = 'saveErrors';
 
     /**
      * Import a file
@@ -35,6 +50,12 @@ interface CaseImporter extends ConfigurableInterface
      * @return array
      */
     public function getImportableExtensions(): array;
+
+    /**
+     * Rules to skip the file
+     * @return array
+     */
+    public function getExcludeRules(): array;
 
     /**
      * @return array [] of Accidents

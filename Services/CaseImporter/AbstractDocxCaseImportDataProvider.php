@@ -36,6 +36,11 @@ abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportData
         return ['docx'];
     }
 
+    public function getExcludeRules(): array
+    {
+        return ['startsWith' => '~$'];
+    }
+
     /**
      * @return array
      */

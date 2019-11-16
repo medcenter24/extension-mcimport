@@ -38,9 +38,20 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
     protected const RULE_TRUE = 'true';
 
     /**
+     * Cache flag for import errors
+     */
+    protected const IMPORTS_ERRORS = 'importsErrors';
+
+    /**
      * @var string readable file with data
      */
     private $path;
+
+    /**
+     * If we want to use import errors to understand why it is not imported
+     * @var bool
+     */
+    private $storeErrors = false;
 
     /**
      * Initialize Data Provider with the file that is parsing
@@ -108,6 +119,11 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
         return $res;
     }
 
+    /**
+     * @param string $method
+     * @param string $rule
+     * @return bool
+     */
     private function checkRule(string $method, string $rule): bool
     {
         $res = false;
@@ -136,14 +152,48 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
         }
 
         if (!$res) {
+            $this->addError(get_class($this), sprintf('%s !== %s', $method, $rule), $msg);
+
             $this->log('File "' . $this->path . '" can not be parsed with data provider "'
-                . __CLASS__ . '", cause data "' . $method . '" not matched to the rule "' . $rule . '"');
+                . get_class($this) . '", cause data "' . $method . '" not matched to the rule "' . $rule . '"');
             if ($msg) {
                 $this->log('Additional import info: '.$msg);
             }
         }
 
         return $res;
+    }
+
+    public function isStoreErrors(): bool
+    {
+        return $this->storeErrors;
+    }
+
+    public function setStoreErrors(bool $active = false): void
+    {
+        $this->storeErrors = $active;
+    }
+
+    protected function addError(string $dataProvider, string $cause, string $details): void
+    {
+        if ($this->isStoreErrors()) {
+            $errors = $this->getErrors();
+            $errors[] = [
+                'dataProvider' => $dataProvider,
+                'cause' => $cause,
+                'details' => $details,
+            ];
+            $this->setCache(self::IMPORTS_ERRORS, $errors);
+        }
+    }
+
+    /**
+     * Stored import errors
+     * @return array
+     */
+    public function getErrors(): array
+    {
+        return $this->hasCache(self::IMPORTS_ERRORS) ? $this->getCache(self::IMPORTS_ERRORS) : [];
     }
 
     /**
@@ -165,13 +215,13 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getPatientBirthday' => self::RULE_STRING,
             'getParentAccidentMarkers' => self::RULE_ARRAY,
             'getVisitTime' => self::RULE_STRING,
-            'getVisitDate' => self::RULE_STRING,
+            'getVisitDate' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getVisitCountry' => self::RULE_STRING,
             'getVisitRegion' => self::RULE_STRING,
             'getVisitCity' => self::RULE_STRING,
-            'getPatientSymptoms' => self::RULE_STRING,
-            'getDoctorInvestigation' => self::RULE_STRING,
-            'getDoctorRecommendation' => self::RULE_STRING,
+            'getPatientSymptoms' => [self::RULE_STRING, self::RULE_REQUIRED],
+            'getDoctorInvestigation' => [self::RULE_STRING, self::RULE_REQUIRED],
+            'getDoctorRecommendation' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getDoctorDiagnostics' => self::RULE_ARRAY,
             'getDoctorName' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getDoctorMedicalBoardingNum' => self::RULE_STRING,

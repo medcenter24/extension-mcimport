@@ -51,6 +51,24 @@ interface CaseImporterDataProvider
      */
     public function getFileExtensions(): array;
 
+    /**
+     * Rules to skip import
+     * @return array
+     */
+    public function getExcludeRules(): array;
+
+    /**
+     * Check if we have to store errors
+     * @return bool
+     */
+    public function isStoreErrors(): bool;
+
+    /**
+     * Stored errors after the import
+     * @return array
+     */
+    public function getErrors(): array;
+
     // ******* Case data *********//
 
     /**

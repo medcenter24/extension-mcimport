@@ -163,7 +163,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    protected function getMethodDataFromRootTableMap(string $methodName)
+    private function getMethodDataFromRootTableMap(string $methodName)
     {
         $key = 'rootMap_'.$methodName;
         if (!$this->hasCache($key)) {
@@ -189,7 +189,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getInternalRefNumber(): string
     {
-        return str_replace(' ', '', $this->getMethodDataFromRootTableMap('getInternalRefNumber'));
+        return str_replace(' ', '', $this->getStringFromRootTableMap('getInternalRefNumber'));
     }
 
     /**
@@ -199,7 +199,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getExternalRefNumber(): string
     {
-        return str_replace(' ', '', $this->getMethodDataFromRootTableMap('getExternalRefNumber'));
+        return str_replace(' ', '', $this->getStringFromRootTableMap('getExternalRefNumber'));
     }
 
     /**
@@ -209,7 +209,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getPatientContacts(): string
     {
-        return $this->getMethodDataFromRootTableMap('getPatientContacts');
+        return $this->getStringFromRootTableMap('getPatientContacts');
     }
 
     /**
@@ -219,7 +219,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getPatientName(): string
     {
-        $patientName =  $this->getMethodDataFromRootTableMap('getPatientName');
+        $patientName =  $this->getStringFromRootTableMap('getPatientName');
         $this->throwIfFalse(is_string($patientName), 'Patient name expected to be a string');
         return $patientName;
     }
@@ -231,7 +231,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getPatientBirthday(): string
     {
-        $birthday = $this->getMethodDataFromRootTableMap('getPatientBirthday');
+        $birthday = $this->getStringFromRootTableMap('getPatientBirthday');
         $this->throwIfFalse(is_string($birthday), 'Birthday expected to be a string');
         return $birthday;
     }
@@ -243,7 +243,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getVisitTime(): string
     {
-        return $this->getMethodDataFromRootTableMap('getVisitTime');
+        return $this->getStringFromRootTableMap('getVisitTime');
     }
 
     /**
@@ -253,7 +253,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getPatientSymptoms(): string
     {
-        return $this->getMethodDataFromRootTableMap('getPatientSymptoms');
+        return $this->getStringFromRootTableMap('getPatientSymptoms');
     }
 
     /**
@@ -263,7 +263,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorInvestigation(): string
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorInvestigation');
+        return $this->getStringFromRootTableMap('getDoctorInvestigation');
     }
 
     /**
@@ -273,7 +273,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorRecommendation(): string
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorRecommendation');
+        return $this->getStringFromRootTableMap('getDoctorRecommendation');
     }
 
     /**
@@ -283,7 +283,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorName(): string
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorName');
+        return $this->getStringFromRootTableMap('getDoctorName');
     }
 
     /**
@@ -293,7 +293,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorMedicalBoardingNum(): string
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorMedicalBoardingNum');
+        return $this->getStringFromRootTableMap('getDoctorMedicalBoardingNum');
     }
 
     /**
@@ -303,7 +303,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorServices(): array
     {
-        return $this->getMethodDataFromRootTableMap('getPatientServices');
+        return $this->getArrayFromRootTableMap('getPatientServices');
     }
 
     /**
@@ -313,7 +313,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getTotalPrice(): float
     {
-        return $this->getMethodDataFromRootTableMap('getTotalPrice');
+        return $this->getStringFromRootTableMap('getTotalPrice');
     }
 
     /**
@@ -323,7 +323,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getParentAccidentMarkers(): array
     {
-        return $this->getMethodDataFromRootTableMap('getParentAccidentMarkers');
+        return $this->getArrayFromRootTableMap('getParentAccidentMarkers');
     }
 
     /**
@@ -333,7 +333,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getHospitalTitle(): string
     {
-        return $this->getMethodDataFromRootTableMap('getHospitalTitle');
+        return $this->getStringFromRootTableMap('getHospitalTitle');
     }
 
     /**
@@ -343,7 +343,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getCityTitle(): string
     {
-        return $this->getMethodDataFromRootTableMap('getCityTitle');
+        return $this->getStringFromRootTableMap('getCityTitle');
     }
 
     /**
@@ -353,7 +353,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getCurrency(): string
     {
-        return $this->getMethodDataFromRootTableMap('getCurrency');
+        return $this->getStringFromRootTableMap('getCurrency');
     }
 
     /**
@@ -363,7 +363,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getAccidentType(): string
     {
-        return $this->getMethodDataFromRootTableMap('getAccidentType');
+        return $this->getStringFromRootTableMap('getAccidentType');
     }
 
     /**
@@ -373,7 +373,33 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getAssistantTitle(): string
     {
-        return $this->getMethodDataFromRootTableMap('getAssistantTitle');
+        return $this->getStringFromRootTableMap('getAssistantTitle');
+    }
+
+    /**
+     * @param string $method
+     * @return string
+     * @throws ImporterException
+     * @throws InconsistentDataException
+     */
+    protected function getStringFromRootTableMap(string $method): string
+    {
+        $res = $this->getMethodDataFromRootTableMap($method);
+        $this->throwIfFalse(is_string($res), $method. ' expects string');
+        return $res;
+    }
+
+    /**
+     * @param string $method
+     * @return string
+     * @throws ImporterException
+     * @throws InconsistentDataException
+     */
+    protected function getArrayFromRootTableMap(string $method): array
+    {
+        $res = $this->getMethodDataFromRootTableMap($method);
+        $this->throwIfFalse(is_array($res), $method. ' expects array');
+        return $res;
     }
 
     /**
@@ -383,7 +409,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getAssistantAddress(): string
     {
-        return $this->getMethodDataFromRootTableMap('getAssistantAddress');
+        return $this->getStringFromRootTableMap('getAssistantAddress');
     }
 
     /**
@@ -393,7 +419,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getCaseableType(): string
     {
-        return $this->getMethodDataFromRootTableMap('getCaseableType');
+        return $this->getStringFromRootTableMap('getCaseableType');
     }
 
     /**
@@ -403,7 +429,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getCaseCreationDate(): string
     {
-        return $this->getMethodDataFromRootTableMap('getCaseCreationDate');
+        return $this->getStringFromRootTableMap('getCaseCreationDate');
     }
 
     /**
@@ -413,7 +439,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorDiagnostics(): array
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorDiagnostics');
+        return $this->getArrayFromRootTableMap('getDoctorDiagnostics');
     }
 
     /**
@@ -423,7 +449,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getVisitDate(): string
     {
-        return $this->getMethodDataFromRootTableMap('getVisitDate');
+        return $this->getStringFromRootTableMap('getVisitDate');
     }
 
     /**
@@ -433,7 +459,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getVisitCountry(): string
     {
-        return $this->getMethodDataFromRootTableMap('getVisitCountry');
+        return $this->getStringFromRootTableMap('getVisitCountry');
     }
 
     /**
@@ -443,7 +469,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getVisitRegion(): string
     {
-        return $this->getMethodDataFromRootTableMap('getVisitRegion');
+        return $this->getStringFromRootTableMap('getVisitRegion');
     }
 
     /**
@@ -453,7 +479,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getVisitCity(): string
     {
-        return $this->getMethodDataFromRootTableMap('getVisitCity');
+        return $this->getStringFromRootTableMap('getVisitCity');
     }
 
     /**
@@ -463,7 +489,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getDoctorGender(): string
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorGender');
+        return $this->getStringFromRootTableMap('getDoctorGender');
     }
 
     /**

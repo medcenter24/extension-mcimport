@@ -21,6 +21,7 @@ use Config;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use medcenter24\McImport\Console\ImportCasesCommand;
+use medcenter24\McImport\Console\ImportProvidersStatisticCommand;
 
 class McImportServiceProvider extends ServiceProvider
 {
@@ -47,7 +48,8 @@ class McImportServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->commands([
-            ImportCasesCommand::class
+            ImportCasesCommand::class,
+            ImportProvidersStatisticCommand::class,
         ]);
     }
 
