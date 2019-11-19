@@ -27,11 +27,6 @@ namespace medcenter24\McImport\Contract;
 interface CaseImporterDataProvider
 {
     /**
-     * One of the markers
-     */
-    public const PARENT_ACCIDENT_MARKER_INTERNAL_REF_NUM = 'internal_ref_num';
-
-    /**
      * Initialize data provider
      * @param string $path
      * @return $this
@@ -205,12 +200,6 @@ interface CaseImporterDataProvider
     public function getParentAccidentMarkers(): array;
 
     /**
-     * Name of the city
-     * @return string
-     */
-    public function getCityTitle(): string;
-
-    /**
      * Hospital name
      * @return string
      */
@@ -252,4 +241,9 @@ interface CaseImporterDataProvider
      * @return bool
      */
     public function isReappointment(): bool;
+
+    /**
+     * @return string
+     */
+    public function getAdditionalDoctorInvestigation(): string;
 }

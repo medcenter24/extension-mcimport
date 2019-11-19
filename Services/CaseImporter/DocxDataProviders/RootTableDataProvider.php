@@ -36,6 +36,11 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
     use ArrayCacheTrait;
 
     /**
+     * One of the markers
+     */
+    public const PARENT_ACCIDENT_MARKER_INTERNAL_REF_NUM = 'internal_ref_num';
+
+    /**
      * @return mixed
      * @throws InconsistentDataException
      */
@@ -101,7 +106,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
         foreach ($map['checkPoints'] as $checkpoint) {
             try {
                 $this->throwIfFalse(Arr::keysExists($this->getRootTables(), $checkpoint['path']),
-                    'Root table address ' . implode(',', $checkpoint['path']) . ' not found');
+                    'Root table address ' . implode(',', $checkpoint['path']) . ' not found ["'.$checkpoint['value'].'"]');
                 $this->throwIfFalse($this->getRootTableData($checkpoint['path']) === $checkpoint['value'],
                     sprintf('Root table checkpoint not matched, "%s" != stored "%s"',
                         $this->getRootTableData($checkpoint['path']), $checkpoint['value']));

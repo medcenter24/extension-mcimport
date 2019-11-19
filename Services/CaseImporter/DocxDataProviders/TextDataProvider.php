@@ -250,16 +250,6 @@ abstract class TextDataProvider extends AbstractCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    public function getCityTitle(): string
-    {
-        return $this->getMethodDataFromRootTableMap('getCityTitle');
-    }
-
-    /**
-     * @return string
-     * @throws ImporterException
-     * @throws InconsistentDataException
-     */
     public function getCurrency(): string
     {
         return $this->getMethodDataFromRootTableMap('getCurrency');
