@@ -125,11 +125,11 @@ class SimpleDocxReaderService implements DocumentReaderService
                 // is it an image
                 if ( $entry['size'] > 0 && preg_match('#\.(jpg|gif|png|jpeg|bmp|wmf)$#i', $entry['name'] )) {
                     $file = $zip->getFromIndex($i);
-                    if( $file ){
+                    if( $file ) {
                         $ext = pathinfo( basename( $entry['name'] ) . PHP_EOL, PATHINFO_EXTENSION);
                         $files[] = [
-                            'name'  => $entry['name'],
-                            'ext'   => $ext,
+                            'name'  => trim($entry['name']),
+                            'ext'   => trim($ext),
                             'imageContent' => $file,
                         ];
                     }

@@ -18,13 +18,15 @@
 namespace medcenter24\McImport\Contract;
 
 
+use medcenter24\mcCore\App\Contract\Debug\DebugLoggerContract;
+
 /**
  * Data provider returns source data only
  * Everything else should create or update controllers or responsible service
  * Interface CaseImporterDataProvider
  * @package medcenter24\McImport\Contract
  */
-interface CaseImporterDataProvider
+interface CaseImporterDataProvider extends DebugLoggerContract
 {
     /**
      * Initialize data provider
@@ -122,12 +124,6 @@ interface CaseImporterDataProvider
     public function getPatientSymptoms(): string;
 
     /**
-     * Additional investigation from the doctor
-     * @return string
-     */
-    public function getDoctorInvestigation(): string;
-
-    /**
      * Recommendation from the doctor to the patient
      * @return string
      */
@@ -164,6 +160,7 @@ interface CaseImporterDataProvider
     /**
      * Doctor services
      * @return array
+     * @example ['title' => 'service 1', 'price' => 120.0]
      */
     public function getDoctorServices(): array;
 
@@ -171,7 +168,7 @@ interface CaseImporterDataProvider
      * Total price of the case
      * @return float
      */
-    public function getTotalPrice(): float;
+    public function getDoctorPaymentPrice(): float;
 
     /**
      * Date of the creation
@@ -246,4 +243,23 @@ interface CaseImporterDataProvider
      * @return string
      */
     public function getAdditionalDoctorInvestigation(): string;
+
+    /**
+     * The doctor for the cases when doctor is not defined
+     * @return array
+     * @example
+     * [
+     *  'name' => 'Doc Name',
+     *  'description' => 'doc info',
+     *  'ref_key' => 'DN',
+     *  'gender' => 'male', // female
+     *  'medical_board_num' => 'medNum',
+     * ]
+     */
+    public function getDefaultDoctorData(): array;
+
+    /**
+     * @return array
+     */
+    public function getDoctorSurveys(): array;
 }

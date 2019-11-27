@@ -266,7 +266,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    public function getDoctorInvestigation(): string
+    protected function getDoctorInvestigation(): string
     {
         return $this->getStringFromRootTableMap('getDoctorInvestigation');
     }
@@ -316,9 +316,9 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    public function getTotalPrice(): float
+    public function getDoctorPaymentPrice(): float
     {
-        return $this->getStringFromRootTableMap('getTotalPrice');
+        return $this->getStringFromRootTableMap('getDoctorPaymentPrice');
     }
 
     /**

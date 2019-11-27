@@ -77,7 +77,7 @@ class CaseImporterService extends Configurable implements CaseImporter
 
         if (!$imported) {
             $this->errors += $errors;
-            logger('File can not be imported', [
+            logger('File not being imported', [
                 'file' => $path,
             ]);
             throw new ImporterException('Not Imported');

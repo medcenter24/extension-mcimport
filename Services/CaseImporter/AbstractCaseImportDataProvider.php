@@ -18,6 +18,7 @@
 namespace medcenter24\McImport\Services\CaseImporter;
 
 
+use Illuminate\Support\Str;
 use medcenter24\mcCore\App\Helpers\FileHelper;
 use medcenter24\mcCore\App\Services\Core\Cache\ArrayCacheTrait;
 use medcenter24\mcCore\App\Services\Core\Cache\CacheInterface;
@@ -227,6 +228,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getDoctorMedicalBoardingNum' => self::RULE_STRING,
             'getDoctorGender' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getImages' => self::RULE_ARRAY,
+            'getCaseableType' => [self::RULE_STRING, self::RULE_REQUIRED]
         ];
     }
 
@@ -241,5 +243,37 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             $this->log('Condition failed: ' . $message);
             throw new ImporterException($message);
         }
+    }
+
+    /**
+     * @return string
+     */
+    abstract protected function getDoctorInvestigation(): string;
+
+    /**
+     * @return array
+     * @example
+     * [
+     *   'title' => '',
+     *   'description' => '',
+     *   'disease_code' => '',
+     * ]
+     */
+    public function getDoctorSurveys(): array
+    {
+        $surveysPlain = $this->getDoctorInvestigation();
+        $surveys = explode('.', $surveysPlain);
+        $surveysFormatted = [];
+        foreach ($surveys as $survey) {
+            $title = Str::ucfirst(trim($survey));
+            if ($title) {
+                $surveysFormatted[] = [
+                    'title' => $title . '.',
+                    'description' => 'test',
+                    'disease_code' => ''
+                ];
+            }
+        }
+        return $surveysFormatted;
     }
 }

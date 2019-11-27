@@ -28,6 +28,13 @@ use medcenter24\McImport\Exceptions\ImporterException;
 use medcenter24\McImport\Providers\DocxReaderServiceProvider;
 use medcenter24\McImport\Services\CaseImporter\AbstractCaseImportDataProvider;
 
+/**
+ * @todo probably will need it on the 2016 templates parsing
+ *
+ *
+ * Class TextDataProvider
+ * @package medcenter24\McImport\Services\CaseImporter\DocxDataProviders
+ */
 abstract class TextDataProvider extends AbstractCaseImportDataProvider
 {
 
@@ -220,9 +227,9 @@ abstract class TextDataProvider extends AbstractCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    public function getTotalPrice(): float
+    public function getDoctorPaymentPrice(): float
     {
-        return $this->getMethodDataFromRootTableMap('getTotalPrice');
+        return $this->getMethodDataFromRootTableMap('getDoctorPaymentPrice');
     }
 
     /**

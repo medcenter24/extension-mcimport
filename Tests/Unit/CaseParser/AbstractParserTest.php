@@ -61,10 +61,12 @@ abstract class AbstractParserTest extends TestCase
         foreach ($this->coveredTemplates() as $coveredTemplate) {
             /** @var CaseImporterDataProvider $docxDataProvider */
             $provider = $this->getDataProvider();
+            $provider->setStoreErrors(true);
             $provider->init($coveredTemplate);
             /* $provider->debugModeOn();
             $provider->setLogChannel('stderr'); */
-            $this->assertTrue($provider->isFit(), 'Path ' . $coveredTemplate . ' can not be parsed');
+            $this->assertTrue($provider->isFit(), 'File ' . $coveredTemplate . ' can not be parsed. Errors: '
+                . print_r($provider->getErrors(), 1));
         }
         
         if (!count($this->coveredTemplates())) {
@@ -106,7 +108,7 @@ abstract class AbstractParserTest extends TestCase
                      'getExternalRefNumber',
                      'getInternalRefNumber',
                      'getPatientSymptoms',
-                     'getDoctorInvestigation',
+                     'getDoctorSurveys',
                      'getAdditionalDoctorInvestigation',
                      'getDoctorRecommendation',
                      'getDoctorDiagnostics',
@@ -114,7 +116,7 @@ abstract class AbstractParserTest extends TestCase
                      'getDoctorGender',
                      'getDoctorMedicalBoardingNum',
                      'getDoctorServices',
-                     'getTotalPrice',
+                     'getDoctorPaymentPrice',
                      'getCurrency',
                      'getVisitTime',
                      'getVisitDate',
