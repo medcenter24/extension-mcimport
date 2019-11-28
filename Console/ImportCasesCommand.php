@@ -23,8 +23,12 @@ use Illuminate\Console\Command;
 use medcenter24\mcCore\App\Exceptions\CommonException;
 use medcenter24\mcCore\App\Helpers\ConverterHelper;
 use medcenter24\mcCore\App\Helpers\FileHelper;
+use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\CaseImporter;
+use medcenter24\McImport\Exceptions\ImporterException;
+use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
 use medcenter24\McImport\Services\CaseImporter\DryCaseGenerator;
+use medcenter24\McImport\Services\ImportLog\ImportLogService;
 use SplFileInfo;
 
 /**
@@ -38,6 +42,8 @@ use SplFileInfo;
  */
 class ImportCasesCommand extends Command
 {
+    use ServiceLocatorTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -98,49 +104,53 @@ class ImportCasesCommand extends Command
                 $self,
                 &$notImported
             ) {
-
                 $path = $fileInfo->getRealPath();
 
                 if ($path) {
                     try {
                         $importerService->import($path);
                     } catch (CommonException $e) {
-                        if ($self->hasOption('show-not-imported') && $self->option('show-not-imported')) {
+                        if ($e->getCode() !== CaseImporterService::DUPLICATION_EXCEPTION_CODE) { // duplication is not an error
+                            if ($self->hasOption('show-not-imported') && $self->option('show-not-imported')) {
 
-                            $pathToShow = $path;
-                            if ($self->hasOption('short-table') && $self->option('short-table')) {
-                                $pathToShow = $fileInfo->getFilename();
-                            }
+                                $pathToShow = $path;
+                                if ($self->hasOption('short-table') && $self->option('short-table')) {
+                                    $pathToShow = $fileInfo->getFilename();
+                                }
 
-                            $error = [[
-                                'path' => $pathToShow,
-                            ]];
+                                $error = [
+                                    [
+                                        'path' => $pathToShow,
+                                    ]
+                                ];
 
-                            if ($self->hasOption('vvv')) {
-                                $error = [];
-                                foreach ($importerService->getErrors() as $providerErrors) {
-                                    foreach ($providerErrors as $providerError) {
+                                if ($self->hasOption('vvv')) {
+                                    $error = [];
+                                    foreach ($importerService->getErrors() as $providerErrors) {
+                                        foreach ($providerErrors as $providerError) {
 
-                                        if ($self->hasOption('short-table') && $self->option('short-table')) {
-                                            $providerError['dataProvider'] = str_replace('medcenter24\McDhv24\Services\Import\DataProviders\\', '', $providerError['dataProvider']);
+                                            if ($self->hasOption('short-table') && $self->option('short-table')) {
+                                                $providerError['dataProvider'] = str_replace('medcenter24\McDhv24\Services\Import\DataProviders\\',
+                                                    '', $providerError['dataProvider']);
+                                            }
+
+                                            $error[] = [
+                                                'path' => $pathToShow,
+                                                'dataProvider' => $providerError['dataProvider'],
+                                                'cause' => $providerError['cause'],
+                                                'details' => $providerError['details']
+                                            ];
                                         }
-
-                                        $error[] = [
-                                            'path' => $pathToShow,
-                                            'dataProvider' => $providerError['dataProvider'],
-                                            'cause' => $providerError['cause'],
-                                            'details' => $providerError['details']
-                                        ];
                                     }
                                 }
+
+                                $notImported += $error;
                             }
+                            $errorsCount++;
 
-                            $notImported += $error;
-                        }
-                        $errorsCount++;
-
-                        if ($self->stopOnFirstError()) {
-                            return false;
+                            if ($self->stopOnFirstError()) {
+                                return false;
+                            }
                         }
                     }
                 }

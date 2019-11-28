@@ -18,7 +18,6 @@
 namespace medcenter24\McImport\Services\ImportLog;
 
 
-use Carbon\Carbon;
 use Exception;
 use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\Services\AbstractModelService;
@@ -52,6 +51,16 @@ class ImportLogService extends AbstractModelService
             'data_provider' => get_class($dataProvider),
             'status' => $status,
         ]);
+    }
+
+    /**
+     * Checks that path already imported
+     * @param string $path
+     * @return bool
+     */
+    public function isImported(string $path): bool
+    {
+        return $this->count(['filename' => $path]) > 0;
     }
 
     /**

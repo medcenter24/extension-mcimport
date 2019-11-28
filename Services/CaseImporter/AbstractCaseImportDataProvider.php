@@ -18,6 +18,8 @@
 namespace medcenter24\McImport\Services\CaseImporter;
 
 
+use Carbon\Carbon;
+use Exception;
 use Illuminate\Support\Str;
 use medcenter24\mcCore\App\Helpers\FileHelper;
 use medcenter24\mcCore\App\Services\Core\Cache\ArrayCacheTrait;
@@ -37,6 +39,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
     protected const RULE_ARRAY = 'array';
     protected const RULE_REQUIRED = 'required';
     protected const RULE_TRUE = 'true';
+    protected const RULE_DATE = 'date';
 
     /**
      * Cache flag for import errors
@@ -147,6 +150,12 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
                 case self::RULE_TRUE:
                     $res = $val === true;
                     break;
+                case self::RULE_DATE:
+                    $res = false;
+                    try {
+                        Carbon::parse($val);
+                        $res = true;
+                    } catch (Exception $e) {}
             }
         } catch (ImporterException $e) {
             $msg = $e->getMessage();
@@ -213,10 +222,10 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getAssistantTitle' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getPatientContacts' => self::RULE_STRING,
             'getPatientName' => [self::RULE_STRING, self::RULE_REQUIRED],
-            'getPatientBirthday' => self::RULE_STRING,
+            'getPatientBirthday' => [self::RULE_STRING, self::RULE_DATE],
             'getParentAccidentMarkers' => self::RULE_ARRAY,
-            'getVisitTime' => self::RULE_STRING,
-            'getVisitDate' => [self::RULE_STRING, self::RULE_REQUIRED],
+            'getVisitTime' => [self::RULE_STRING, self::RULE_DATE],
+            'getVisitDate' => [self::RULE_STRING, self::RULE_REQUIRED, self::RULE_DATE],
             'getVisitCountry' => self::RULE_STRING,
             'getVisitRegion' => self::RULE_STRING,
             'getVisitCity' => self::RULE_STRING,

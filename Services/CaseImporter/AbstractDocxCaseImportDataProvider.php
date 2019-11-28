@@ -19,8 +19,10 @@
 namespace medcenter24\McImport\Services\CaseImporter;
 
 
+use Carbon\Carbon;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\DocumentReaderService;
+use medcenter24\McImport\Exceptions\ImporterException;
 use medcenter24\McImport\Providers\DocxReaderServiceProvider;
 
 abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportDataProvider
@@ -55,5 +57,19 @@ abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportData
             $docs[] = $file;
         }
         return $docs;
+    }
+
+    /**
+     * Validate all parsed dates
+     * @param string $date
+     * @throws ImporterException
+     */
+    public function checkDate(string $date): void
+    {
+        try {
+            Carbon::parse($date);
+        } catch (\Exception $e) {
+            throw new ImporterException('Incorrect date format "' . $e->getMessage() . '"');
+        }
     }
 }

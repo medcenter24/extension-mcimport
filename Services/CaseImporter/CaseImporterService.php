@@ -34,6 +34,8 @@ class CaseImporterService extends Configurable implements CaseImporter
     public const DISC_IMPORTS = 'imports';
     public const CASES_FOLDERS = 'cases';
 
+    public const DUPLICATION_EXCEPTION_CODE = 77;
+
     /**
      * List of imported cases (id of Accidents)
      * @var array
@@ -61,6 +63,10 @@ class CaseImporterService extends Configurable implements CaseImporter
             throw new ImporterException('Case Generator not configured');
         }
 
+        if ($this->getImportLogService()->isImported($path)) {
+            throw new ImporterException('Already imported', self::DUPLICATION_EXCEPTION_CODE);
+        }
+
         /** @var CaseImporterDataProvider $registeredProvider */
         $errors = [];
         foreach ($this->getOption(self::OPTION_PROVIDERS) as $registeredProvider) {
@@ -73,7 +79,7 @@ class CaseImporterService extends Configurable implements CaseImporter
                 $accident = $this->createCase($registeredProvider);
                 $this->importedAccidents[] = $accident->getAttribute('id');
                 // don't want to duplicate logs, so it will be written only once - on success
-                $this->writeImportLog($path, $registeredProvider, json_encode(['status' => 'imported']));
+                $this->writeImportLog($path, $registeredProvider, json_encode(['status' => 'imported']), $accident);
                 $imported = true;
                 break;
             }
@@ -90,11 +96,14 @@ class CaseImporterService extends Configurable implements CaseImporter
         }
     }
 
-    private function writeImportLog(string $path, CaseImporterDataProvider $dataProvider, string $status): void
+    private function getImportLogService(): ImportLogService
     {
-        /** @var ImportLogService $logService */
-        $logService = $this->getServiceLocator()->get(ImportLogService::class);
-        $logService->log($path, $dataProvider, $status);
+        return $this->getServiceLocator()->get(ImportLogService::class);
+    }
+
+    private function writeImportLog(string $path, CaseImporterDataProvider $dataProvider, string $status, Accident $accident = null): void
+    {
+        $this->getImportLogService()->log($path, $dataProvider, $status, $accident);
     }
 
     public function getErrors(): array
