@@ -35,7 +35,6 @@ use medcenter24\mcCore\App\Document;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\mcCore\App\FinanceCurrency;
 use medcenter24\mcCore\App\Helpers\FileHelper;
-use medcenter24\mcCore\App\Helpers\StrHelper;
 use medcenter24\mcCore\App\Hospital;
 use medcenter24\mcCore\App\HospitalAccident;
 use medcenter24\mcCore\App\Patient;
@@ -636,11 +635,29 @@ class CaseGenerator implements CaseGeneratorInterface
         /** @var MorphToMany $model */
         $model = $accident->documents();
 
+        /** @var TmpFileService $tmpFileService */
+        $tmpFileService = $this->getServiceLocator()->get(TmpFileService::class);
+
         try {
-            
-            $filePaths = $dataList;
-            
-            $docs = $service->createDocumentsFromFiles($filePaths, $this->getImporterUser());
+            $files = [];
+            foreach ($dataList as $item) {
+                if ($item instanceof UploadedFile) {
+                    $files[] = $item;
+                } elseif (is_array($item)) {
+                    if (!array_key_exists('imageContent', $item)) {
+                        throw new CaseGeneratorException('File "'.$item['name'].'" does not have a content');
+                    }
+                    // create new tmp file which will be deleted after uploading
+                    $tmpFile = $tmpFileService->createTmpFile('imported');
+                    FileHelper::writeFile($tmpFile, $item['imageContent']);
+                    $fileName =$item['name'];
+                    $fileName = preg_replace('/\.'.$item['ext'].'/', '', $fileName);
+                    $fileName = FileHelper::purifiedFileName($fileName).'.'.$item['ext'];
+                    $files[] = new UploadedFile($tmpFile, $fileName);
+                }
+            }
+
+            $docs = $service->createDocumentsFromFiles($files, $this->getImporterUser());
             $ids = [];
             if ($docs->count()) {
                 /** @var Document $doc */

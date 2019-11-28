@@ -42,6 +42,7 @@ use medcenter24\mcCore\App\Services\DoctorServiceService;
 use medcenter24\mcCore\App\Services\DoctorsService;
 use medcenter24\mcCore\App\Services\DoctorSurveyService;
 use medcenter24\mcCore\App\Services\DocumentService;
+use medcenter24\mcCore\App\Services\File\TmpFileService;
 use medcenter24\mcCore\App\Services\PatientService;
 use medcenter24\mcCore\App\Services\PaymentService;
 use medcenter24\mcCore\App\Services\UserService;
@@ -223,6 +224,9 @@ class CaseGeneratorTest extends TestCase
         /** @var DocumentService|MockObject $mockDocumentService */
         $mockDocumentService = $this->createMock(DocumentService::class);
 
+        /** @var TmpFileService $mockTmpFileService */
+        $mockTmpFileService = $this->createMock(TmpFileService::class);
+
         /** @var ServiceLocator|MockObject $serviceLocator */
         $serviceLocator = $this->mockServiceLocator([
             PaymentService::class => $mockPaymentService,
@@ -240,6 +244,7 @@ class CaseGeneratorTest extends TestCase
             DiagnosticService::class => $mockDiagnosticService,
             DoctorSurveyService::class => $mockDoctorSurveyService,
             DocumentService::class => $mockDocumentService,
+            TmpFileService::class => $mockTmpFileService,
         ]);
 
         $generator = new CaseGenerator();
