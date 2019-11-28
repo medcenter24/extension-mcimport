@@ -24,6 +24,7 @@ use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\ImporterException;
 use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
+use medcenter24\McImport\Services\ImportLog\ImportLogService;
 
 class CaseImporterServiceTest extends TestCase
 {
@@ -63,6 +64,10 @@ class CaseImporterServiceTest extends TestCase
             CaseImporterService::OPTION_PROVIDERS => [$dataProviderMock],
             CaseImporterService::OPTION_CASE_GENERATOR => $generatorMock,
         ]);
+        $serviceLocatorMock = $this->mockServiceLocator([
+            ImportLogService::class => $this->createMock(ImportLogService::class),
+        ]);
+        $service->setServiceLocator($serviceLocatorMock);
         $service->import('$path');
         self::assertSame([1], $service->getImportedAccidents());
     }

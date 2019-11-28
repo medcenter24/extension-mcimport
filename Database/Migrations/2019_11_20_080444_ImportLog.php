@@ -28,12 +28,15 @@ class ImportLog extends Migration
      */
     public function up(): void
     {
-        Schema::create('import_log', function (Blueprint $table) {
+        Schema::create('import_logs', function (Blueprint $table) {
             $table->increments('id');
-            $table->unsignedInteger('case_id')->default(0)->index();
             $table->string('filename')->default('')->index();
+            $table->unsignedInteger('accident_id')->default(0)->index();
+            $table->string('internal_ref_num')->default('')->index();
+            $table->string('external_ref_num')->default('')->index();
             $table->string('data_provider')->default('')->index();
-            $table->timestamp('created_at')->nullable();
+            $table->text('status');
+            $table->timestamps();
         });
     }
 
@@ -44,6 +47,6 @@ class ImportLog extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('import_log');
+        Schema::dropIfExists('import_logs');
     }
 }
