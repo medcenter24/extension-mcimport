@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,23 +17,16 @@
 
 namespace medcenter24\McImport\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Contract\DocToDocxConverter;
-use medcenter24\McImport\Services\DocxReader\DocToDocxConverterService;
 
-class DocToDocxConverterServiceProvider extends ServiceProvider
+use medcenter24\mcCore\App\Services\DomDocumentService;
+
+/**
+ * @todo implement the service which will load only the images that needed (excluding sign or logo) and bind them to the case
+ * Class CaseImageImporterServiceProvider
+ * @package medcenter24\McImport\Providers
+ */
+class CaseImageImporterServiceProvider
 {
-    /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
-     *
-     * @return void
-     */
-    public function boot(): void
-    {
-    }
-
     /**
      * Register the application services.
      *
@@ -42,8 +34,11 @@ class DocToDocxConverterServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(DocToDocxConverter::class, static function() {
-            return new DocToDocxConverterService();
+        $this->app->bind(__CLASS__, static function() {
+            return new CaseImageImporterService([
+                // path to the examples of the excluded images
+                CaseImageImporterService::OPTION_EXCLUDED_DIR => ''
+            ]);
         });
     }
 }

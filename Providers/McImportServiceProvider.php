@@ -1,10 +1,27 @@
 <?php
+/**
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * as published by the Free Software Foundation; under version 2
+ * of the License (non-upgradable).
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+ *
+ * Copyright (c) 2019 (original work) MedCenter24.com;
+ */
 
 namespace medcenter24\McImport\Providers;
 
+use Config;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Factory;
 use medcenter24\McImport\Console\ImportCasesCommand;
+use medcenter24\McImport\Console\ImportProvidersStatisticCommand;
 
 class McImportServiceProvider extends ServiceProvider
 {
@@ -31,7 +48,8 @@ class McImportServiceProvider extends ServiceProvider
     {
         $this->app->register(RouteServiceProvider::class);
         $this->commands([
-            ImportCasesCommand::class
+            ImportCasesCommand::class,
+            ImportProvidersStatisticCommand::class,
         ]);
     }
 
@@ -67,7 +85,7 @@ class McImportServiceProvider extends ServiceProvider
 
         $this->loadViewsFrom(array_merge(array_map(function ($path) {
             return $path . '/modules/mcimport';
-        }, \Config::get('view.paths')), [$sourcePath]), 'mcimport');
+        }, Config::get('view.paths')), [$sourcePath]), 'mcimport');
     }
 
     /**
@@ -93,18 +111,8 @@ class McImportServiceProvider extends ServiceProvider
      */
     public function registerFactories(): void
     {
-        if (! app()->environment('production') && class_exists('Faker\Factory')) {
+        if ( class_exists('Faker\Factory') && !app()->environment('production')) {
             app(Factory::class)->load(__DIR__ . '/../Database/factories');
         }
-    }
-
-    /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides(): array
-    {
-        return [];
     }
 }

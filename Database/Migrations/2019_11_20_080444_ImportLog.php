@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,33 +15,38 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Providers;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
 
-use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
-
-class DocxReaderServiceProvider extends ServiceProvider
+class ImportLog extends Migration
 {
     /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
+     * Run the migrations.
      *
      * @return void
      */
-    public function boot(): void
+    public function up(): void
     {
+        Schema::create('import_logs', function (Blueprint $table) {
+            $table->increments('id');
+            $table->string('filename')->default('')->index();
+            $table->unsignedInteger('accident_id')->default(0)->index();
+            $table->string('internal_ref_num')->default('')->index();
+            $table->string('external_ref_num')->default('')->index();
+            $table->string('data_provider')->default('')->index();
+            $table->text('status');
+            $table->timestamps();
+        });
     }
 
     /**
-     * Register the application services.
+     * Reverse the migrations.
      *
      * @return void
      */
-    public function register(): void
+    public function down(): void
     {
-        $this->app->bind(__CLASS__, static function() {
-            return new SimpleDocxReaderService();
-        });
+        Schema::dropIfExists('import_logs');
     }
 }

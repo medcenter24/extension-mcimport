@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,33 +15,12 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Providers;
+namespace medcenter24\McImport\Contract;
 
-use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
 
-class DocxReaderServiceProvider extends ServiceProvider
+use medcenter24\mcCore\App\Accident;
+
+interface CaseGeneratorInterface
 {
-    /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
-     *
-     * @return void
-     */
-    public function boot(): void
-    {
-    }
-
-    /**
-     * Register the application services.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        $this->app->bind(__CLASS__, static function() {
-            return new SimpleDocxReaderService();
-        });
-    }
+    public function createCase(CaseImporterDataProvider $dataProvider): Accident;
 }

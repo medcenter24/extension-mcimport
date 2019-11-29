@@ -16,33 +16,36 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Providers;
+namespace medcenter24\McImport\Contract;
 
-use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
 
-class DocxReaderServiceProvider extends ServiceProvider
+use DOMDocument;
+
+/**
+ * Getting the base information from the docx file
+ * Interface DocxReader
+ * @package medcenter24\McImport\Contract
+ */
+interface DocumentReaderService
 {
     /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
-     *
-     * @return void
+     * Object with parsed body
+     * @param string $filename
+     * @return mixed
      */
-    public function boot(): void
-    {
-    }
+    public function getDom(string $filename): DOMDocument;
 
     /**
-     * Register the application services.
-     *
-     * @return void
+     * Get all text from the document
+     * @param string $filename
+     * @return string
      */
-    public function register(): void
-    {
-        $this->app->bind(__CLASS__, static function() {
-            return new SimpleDocxReaderService();
-        });
-    }
+    public function getText(string $filename): string;
+
+    /**
+     * Load images from the docx
+     * @param string $filename
+     * @return array
+     */
+    public function getImages(string $filename): array;
 }

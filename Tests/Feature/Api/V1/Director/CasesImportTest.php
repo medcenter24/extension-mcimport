@@ -25,7 +25,7 @@ use medcenter24\mcCore\Tests\Feature\Api\JwtHeaders;
 use medcenter24\mcCore\Tests\Feature\Api\LoggedUser;
 use medcenter24\mcCore\Tests\TestCase;
 use Illuminate\Foundation\Testing\DatabaseMigrations;
-use medcenter24\McImport\Services\CaseImporterService;
+use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
 
 class CasesImportTest extends TestCase
 {

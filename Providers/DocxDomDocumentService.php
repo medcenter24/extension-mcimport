@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,34 +15,26 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Contract;
+namespace medcenter24\McImport\Providers;
 
 
-use DOMDocument;
+use Illuminate\Support\ServiceProvider;
+use medcenter24\mcCore\App\Services\DomDocumentService;
 
-interface DocxReaderService
+class DocxDomDocumentService extends ServiceProvider
 {
     /**
-     * Load file for reading
-     * @return mixed
+     * Register the application services.
+     *
+     * @return void
      */
-    public function load(): self;
-
-    /**
-     * Object with parsed body
-     * @return mixed
-     */
-    public function getDom(): DOMDocument;
-
-    /**
-     * Get all text from the document
-     * @return string
-     */
-    public function getText(): string;
-
-    /**
-     * File path
-     * @return string
-     */
-    public function getFilePath(): string;
+    public function register(): void
+    {
+        $this->app->bind(__CLASS__, static function() {
+            return new DomDocumentService([
+                DomDocumentService::STRIP_STRING => true,
+                DomDocumentService::CONFIG_WITHOUT_ATTRIBUTES => true,
+            ]);
+        });
+    }
 }
