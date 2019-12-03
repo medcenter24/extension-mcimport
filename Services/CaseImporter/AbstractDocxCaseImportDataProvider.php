@@ -20,10 +20,14 @@ namespace medcenter24\McImport\Services\CaseImporter;
 
 
 use Carbon\Carbon;
+use Exception;
+use FilesystemIterator;
+use medcenter24\mcCore\App\Helpers\FileHelper;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\DocumentReaderService;
 use medcenter24\McImport\Exceptions\ImporterException;
 use medcenter24\McImport\Providers\DocxReaderServiceProvider;
+use SplFileInfo;
 
 abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportDataProvider
 {
@@ -54,9 +58,34 @@ abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportData
 
         $docs = [];
         foreach ($files as $file) {
-            $docs[] = $file;
+            if (!$this->isExcludedFile($file)) {
+                $docs[] = $file;
+            }
         }
         return $docs;
+    }
+
+    protected function getExcludedFilesPath(): string
+    {
+        return '';
+    }
+
+    private function isExcludedFile(array $file): bool
+    {
+        /** @var string $excludeDir */
+        $excludeDirPath = $this->getExcludedFilesPath();
+        if (FileHelper::isDirExists($excludeDirPath)) {
+            $excludedFiles = new FilesystemIterator($excludeDirPath);
+            /** @var SplFileInfo $exclude */
+            foreach ($excludedFiles as $exclude) {
+                if (array_key_exists('imageContent', $file)
+                    && strcmp($file['imageContent'], file_get_contents($exclude->getRealPath())) === 0
+                ) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**
@@ -68,7 +97,7 @@ abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportData
     {
         try {
             Carbon::parse($date);
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             throw new ImporterException('Incorrect date format "' . $e->getMessage() . '"');
         }
     }

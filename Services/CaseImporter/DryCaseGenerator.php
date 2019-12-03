@@ -18,7 +18,6 @@
 namespace medcenter24\McImport\Services\CaseImporter;
 
 
-use medcenter24\mcCore\App\Accident;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 
 /**
@@ -35,6 +34,6 @@ class DryCaseGenerator extends CaseGenerator
      */
     public function createCase(CaseImporterDataProvider $dataProvider): int
     {
-        return (new Accident(['title' => 'wet generator']))->getAttribute('id');
+        return 0;
     }
 }

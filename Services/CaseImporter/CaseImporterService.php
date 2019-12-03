@@ -18,6 +18,7 @@
 namespace medcenter24\McImport\Services\CaseImporter;
 
 
+use Illuminate\Support\Facades\Log;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\mcCore\App\Support\Core\Configurable;
 use medcenter24\McImport\Contract\CaseGeneratorInterface;
@@ -82,7 +83,7 @@ class CaseImporterService extends Configurable implements CaseImporter
 
         if (!$imported) {
             $this->errors += $errors;
-            logger('File not being imported', [
+            Log::error('File not being imported', [
                 'file' => $path,
             ]);
             throw new ImporterException('Not Imported');

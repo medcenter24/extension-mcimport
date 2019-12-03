@@ -160,7 +160,7 @@ class ImportCasesCommand extends Command
 
             $bar->finish();
 
-            if ($self->hasOption('show-not-imported') && $this->option('show-not-imported') && count($notImported)) {
+            if ($this->isOptionOn('show-not-imported') && count($notImported)) {
                 $this->info("\n\n");
                 $this->alert('Not Imported files');
                 $headers = ['Path'];
