@@ -224,7 +224,7 @@ class CaseGenerator implements CaseGeneratorInterface
             'form_report_id' => null,
             'city_id' => $this->getCity()->getAttribute('id'),
             'caseable_payment_id' => $this->getCaseablePayment()->getAttribute('id'),
-            'income_payment_id' => null,
+            'income_payment_id' => $this->getIncomePayment()->getAttribute('id'),
             'assistant_payment_id' => null,
             'caseable_id' => $this->getCaseable()->getAttribute('id'),
             'caseable_type' => $this->getDataProvider()->getCaseableType(),
@@ -377,6 +377,25 @@ class CaseGenerator implements CaseGeneratorInterface
         /** @var Payment $payment */
         $payment = $paymentService->create([
             'value' => $this->getDataProvider()->getDoctorPaymentPrice(),
+            'currency_id' => $this->getCurrency()->getAttribute('id'),
+            'fixed' => 1,
+            'created_by' => $this->getImporterUser()->getAttribute('id'),
+        ]);
+        return $payment;
+    }
+
+    /**
+     * Fixed 0 while we don't know real income value
+     * @return Payment
+     * @throws CaseGeneratorException
+     */
+    private function getIncomePayment(): Payment
+    {
+        /** @var PaymentService $paymentService */
+        $paymentService = $this->getServiceLocator()->get(PaymentService::class);
+        /** @var Payment $payment */
+        $payment = $paymentService->create([
+            'value' => 0,
             'currency_id' => $this->getCurrency()->getAttribute('id'),
             'fixed' => 1,
             'created_by' => $this->getImporterUser()->getAttribute('id'),
