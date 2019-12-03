@@ -77,8 +77,9 @@ class CaseGeneratorIntegrationTest extends TestCase
     public function testCreateDoctorCase(): void
     {
         $generator = new CaseGenerator();
+        $id = $generator->createCase($this->dataProvider);
         /** @var Accident $accident */
-        $accident = $generator->createCase($this->dataProvider);
+        $accident = Accident::find($id);
         // accident
         $this->assertSame(1, $accident->getAttribute('id'));
         $this->assertSame('{"id":1,"parent_id":"0","patient_id":"1","accident_type_id":"1","accident_status_id":"2","assistant_id":"1","assistant_ref_num":"bbb-ext-ref","assistant_invoice_id":"0","assistant_guarantee_id":"0","form_report_id":"0","city_id":"1","ref_num":"aaa-inter-ref","title":"i_11012011_doctor_1","address":"","handling_time":"2011-01-11 00:00:00","contacts":"patients contacts","symptoms":"Symptoms of the patient"}', $accident->toJson());

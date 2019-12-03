@@ -31,10 +31,10 @@ class DryCaseGenerator extends CaseGenerator
 
     /**
      * @param CaseImporterDataProvider $dataProvider
-     * @return Accident
+     * @return int
      */
-    public function createCase(CaseImporterDataProvider $dataProvider): Accident
+    public function createCase(CaseImporterDataProvider $dataProvider): int
     {
-        return new Accident(['title' => 'wet generator']);
+        return (new Accident(['title' => 'wet generator']))->getAttribute('id');
     }
 }

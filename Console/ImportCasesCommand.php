@@ -25,10 +25,8 @@ use medcenter24\mcCore\App\Helpers\ConverterHelper;
 use medcenter24\mcCore\App\Helpers\FileHelper;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\CaseImporter;
-use medcenter24\McImport\Exceptions\ImporterException;
 use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
 use medcenter24\McImport\Services\CaseImporter\DryCaseGenerator;
-use medcenter24\McImport\Services\ImportLog\ImportLogService;
 use SplFileInfo;
 
 /**

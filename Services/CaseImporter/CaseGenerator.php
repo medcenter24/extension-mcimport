@@ -66,7 +66,9 @@ use medcenter24\mcCore\App\Services\UserService;
 use medcenter24\mcCore\App\User;
 use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
+use medcenter24\McImport\Entities\Importing\ImportingCase;
 use medcenter24\McImport\Exceptions\CaseGeneratorException;
+use medcenter24\McImport\Services\ImportLog\ImportLogService;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\DiskDoesNotExist;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileDoesNotExist;
 use Spatie\MediaLibrary\Exceptions\FileCannotBeAdded\FileIsTooBig;
@@ -87,50 +89,67 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     private $dataProvider;
 
-    // related models
     /**
-     * @var Patient
+     * @var ImportingCase
      */
-    private $patient;
+    private $entity;
 
     /**
-     * @var AccidentAbstract
-     */
-    private $caseable;
-
-    /**
-     * Current create date to use the same time
+     * To use with tests
      * @var string
      */
-    private $currentTime;
-
-    /**
-     * User which created for the importer purposes
-     * @var User
-     */
-    private $user;
+    private $date;
 
     /**
      * @param CaseImporterDataProvider $dataProvider - initialized data provider to get data from
-     * @return Accident
+     * @return int Accident identifier
      * @throws CaseGeneratorException
      */
-    public function createCase(CaseImporterDataProvider $dataProvider): Accident
+    public function createCase(CaseImporterDataProvider $dataProvider): int
     {
+        $this->entity = new ImportingCase();
+        
+        if ($this->date) {
+            $this->getEntity()->setCurrentTime($this->date);
+        }
+        
         $this->dataProvider = $dataProvider;
 
         $this->checkData();
         try {
-            $accident = $this->createAccident();
+            $this->getEntity()->setAccident($this->createAccident());
         } catch (InconsistentDataException $e) {
             throw new CaseGeneratorException($e->getMessage());
         }
-        $this->addServices($accident);
-        $this->addDiagnostics($accident);
-        $this->addSurveys($accident);
-        $this->addDocuments($accident);
+        $this->addServices();
+        $this->addDiagnostics();
+        $this->addSurveys();
+        $this->addDocuments();
 
-        return $accident;
+        // don't want to duplicate logs, so it will be written only once - on success
+        $this->writeImportLog($dataProvider, json_encode(['status' => 'imported']), $this->getEntity()->getAccident());
+
+        $accidentId = $this->getEntity()->getAccident()->getAttribute('id');
+        unset($this->entity);
+        return $accidentId;
+    }
+
+    /**
+     * @return ImportingCase
+     */
+    private function getEntity(): ImportingCase
+    {
+        return $this->entity;
+    }
+
+    private function writeImportLog(CaseImporterDataProvider $dataProvider, string $status, Accident $accident = null): void
+    {
+        $this->getImportLogService()->log($dataProvider->getPath(), $dataProvider, $status, $accident);
+    }
+
+    private function getImportLogService(): ImportLogService
+    {
+        return $this->getServiceLocator()->get(ImportLogService::class);
     }
 
     /**
@@ -158,15 +177,17 @@ class CaseGenerator implements CaseGeneratorInterface
 
     private function getImporterUser(): User
     {
-        if (!$this->user) {
+        if (!$this->getEntity()->hasUser()) {
             /** @var UserService $userService */
             $userService = $this->getServiceLocator()->get(UserService::class);
-            $this->user = $userService->firstOrCreate([
+            /** @var User $user */
+            $user = $userService->firstOrCreate([
                 'name' => 'Importer',
                 'email' => 'importer@medcenter24.com',
             ]);
+            $this->getEntity()->setUser($user);
         }
-        return $this->user;
+        return $this->getEntity()->getUser();
     }
 
     /**
@@ -214,7 +235,7 @@ class CaseGenerator implements CaseGeneratorInterface
             'contacts' => $this->getDataProvider()->getPatientContacts(),
             'symptoms' => $this->getDataProvider()->getPatientSymptoms(),
             'created_at' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
-            'updated_at' => $this->getUpdatedDate(),
+            'updated_at' => $this->getEntity()->getCurrentTime(),
         ]);
 
         // first status always `new`, now we need to add status `imported`
@@ -249,15 +270,17 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     private function getPatient(): Patient
     {
-        if (!$this->patient) {
+        if (!$this->getEntity()->hasPatient()) {
             /** @var PatientService $patientService */
             $patientService = $this->getServiceLocator()->get(PatientService::class);
-            $this->patient = $patientService->firstOrCreate([
+            /** @var Patient $patient */
+            $patient = $patientService->firstOrCreate([
                 'name' => $this->getDataProvider()->getPatientName(),
                 'birthday' => Carbon::parse($this->getDataProvider()->getPatientBirthday()),
             ]);
+            $this->getEntity()->setPatient($patient);
         }
-        return $this->patient;
+        return $this->getEntity()->getPatient();
     }
 
     /**
@@ -380,21 +403,22 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     private function getCaseable(): AccidentAbstract
     {
-        if (!$this->caseable) {
+        if (!$this->getEntity()->hasCaseable()) {
             switch ($this->getDataProvider()->getCaseableType()) {
                 case DoctorAccident::class:
-                    $this->caseable = $this->createDoctorAccident();
+                    $caseable = $this->createDoctorAccident();
                     break;
 
                 case HospitalAccident::class:
-                    $this->caseable = $this->createHospitalAccident();
+                    $caseable = $this->createHospitalAccident();
                     break;
 
                 default: throw new InconsistentDataException('Undefined caseable type');
             }
+            $this->getEntity()->setCaseable($caseable);
         }
 
-        return $this->caseable;
+        return $this->getEntity()->getCaseable();
     }
 
     /**
@@ -411,7 +435,7 @@ class CaseGenerator implements CaseGeneratorInterface
             'investigation' => $this->getDataProvider()->getAdditionalDoctorInvestigation(),
             'visit_time' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
             'created_at' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
-            'updated_at' => Carbon::parse($this->getUpdatedDate()),
+            'updated_at' => Carbon::parse($this->getEntity()->getCurrentTime()),
         ]);
     }
 
@@ -445,22 +469,11 @@ class CaseGenerator implements CaseGeneratorInterface
     }
 
     /**
-     * @return string
-     */
-    private function getUpdatedDate(): string
-    {
-        if (!$this->currentTime) {
-            $this->currentTime = Carbon::now()->format('Y-m-d H:i:s');
-        }
-        return Carbon::parse($this->currentTime);
-    }
-
-    /**
      * @param string $updatedTime
      */
     public function setUpdatedDate(string $updatedTime): void
     {
-        $this->currentTime = $updatedTime;
+        $this->date = $updatedTime;
     }
 
     /**
@@ -553,48 +566,45 @@ class CaseGenerator implements CaseGeneratorInterface
     }
 
     /**
-     * @param Accident $accident
      * @throws CaseGeneratorException
      */
-    private function addServices(Accident $accident): void
+    private function addServices(): void
     {
         /** @var array $dataList */
         $dataList = $this->getDataProvider()->getDoctorServices();
         /** @var AbstractModelService|DoctorServiceService $service */
         $service = $this->getServiceLocator()->get(DoctorServiceService::class);
         /** @var MorphToMany $model */
-        $model = $accident->services();
+        $model = $this->getEntity()->getAccident()->services();
 
         $ids = $this->createFormattedDocResourcesIds($dataList, $service);
         $this->bindMorphed($ids, $model);
     }
 
     /**
-     * @param Accident $accident
      * @throws CaseGeneratorException
      */
-    private function addDiagnostics(Accident $accident): void
+    private function addDiagnostics(): void
     {
         /** @var array $dataList */
         $dataList = $this->getDataProvider()->getDoctorDiagnostics();
         /** @var AbstractModelService|DiagnosticService $service */
         $service = $this->getServiceLocator()->get(DiagnosticService::class);
         /** @var MorphToMany $model */
-        $model = $accident->diagnostics();
+        $model = $this->getEntity()->getAccident()->diagnostics();
         $ids = $this->createFormattedDocResourcesIds($dataList, $service);
         $this->bindMorphed($ids, $model);
     }
 
     /**
-     * @param Accident $accident
      * @throws CaseGeneratorException
      */
-    private function addSurveys(Accident $accident): void
+    private function addSurveys(): void
     {
         $dataList = $this->getDataProvider()->getDoctorSurveys();
         /** @var DoctorSurveyService $service */
         $service = $this->getServiceLocator()->get(DoctorSurveyService::class);
-        $model = $accident->surveys();
+        $model = $this->getEntity()->getAccident()->surveys();
 
         // we have to exclude duplications
         $allObjs = [];
@@ -623,17 +633,16 @@ class CaseGenerator implements CaseGeneratorInterface
     }
 
     /**
-     * @param Accident $accident
      * @throws CaseGeneratorException
      */
-    private function addDocuments(Accident $accident): void
+    private function addDocuments(): void
     {
         /** @var array $dataList */
         $dataList = $this->getDataProvider()->getImages();
         /** @var DocumentService $service */
         $service = $this->getServiceLocator()->get(DocumentService::class);
         /** @var MorphToMany $model */
-        $model = $accident->documents();
+        $model = $this->getEntity()->getAccident()->documents();
 
         /** @var TmpFileService $tmpFileService */
         $tmpFileService = $this->getServiceLocator()->get(TmpFileService::class);

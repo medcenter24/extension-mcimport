@@ -18,7 +18,6 @@
 namespace medcenter24\McImport\Services\CaseImporter;
 
 
-use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\mcCore\App\Support\Core\Configurable;
 use medcenter24\McImport\Contract\CaseGeneratorInterface;
@@ -32,8 +31,6 @@ class CaseImporterService extends Configurable implements CaseImporter
     use ServiceLocatorTrait;
 
     public const DISC_IMPORTS = 'imports';
-    public const CASES_FOLDERS = 'cases';
-
     public const DUPLICATION_EXCEPTION_CODE = 77;
 
     /**
@@ -75,11 +72,7 @@ class CaseImporterService extends Configurable implements CaseImporter
             }
             $registeredProvider->init($path);
             if ($registeredProvider->isFit()) {
-                /** @var Accident $accident */
-                $accident = $this->createCase($registeredProvider);
-                $this->importedAccidents[] = $accident->getAttribute('id');
-                // don't want to duplicate logs, so it will be written only once - on success
-                $this->writeImportLog($path, $registeredProvider, json_encode(['status' => 'imported']), $accident);
+                $this->importedAccidents[] = $this->createCase($registeredProvider);
                 $imported = true;
                 break;
             }
@@ -99,11 +92,6 @@ class CaseImporterService extends Configurable implements CaseImporter
     private function getImportLogService(): ImportLogService
     {
         return $this->getServiceLocator()->get(ImportLogService::class);
-    }
-
-    private function writeImportLog(string $path, CaseImporterDataProvider $dataProvider, string $status, Accident $accident = null): void
-    {
-        $this->getImportLogService()->log($path, $dataProvider, $status, $accident);
     }
 
     public function getErrors(): array
@@ -147,9 +135,9 @@ class CaseImporterService extends Configurable implements CaseImporter
 
     /**
      * @param CaseImporterDataProvider $dataProvider
-     * @return Accident
+     * @return int
      */
-    private function createCase(CaseImporterDataProvider $dataProvider): Accident
+    private function createCase(CaseImporterDataProvider $dataProvider): int
     {
         /** @var CaseGeneratorInterface $caseGenerator */
         $caseGenerator = $this->getOption(self::OPTION_CASE_GENERATOR);

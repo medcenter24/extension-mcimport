@@ -36,6 +36,12 @@ interface CaseImporterDataProvider extends DebugLoggerContract
     public function init(string $path): self;
 
     /**
+     * Path used in init
+     * @return string
+     */
+    public function getPath(): string;
+
+    /**
      * Check that this data provider could get data from the initialized document
      * checks that all checkpoints on the expected places
      * @return bool

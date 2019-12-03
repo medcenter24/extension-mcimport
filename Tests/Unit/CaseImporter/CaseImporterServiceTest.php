@@ -18,7 +18,6 @@
 namespace medcenter24\McImport\Tests\Unit\CaseImporter;
 
 
-use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\Tests\TestCase;
 use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
@@ -54,11 +53,8 @@ class CaseImporterServiceTest extends TestCase
         $dataProviderMock = $this->createMock(CaseImporterDataProvider::class);
         $dataProviderMock->method('isFit')->willReturn(true);
 
-        $mockedAccident = $this->createMock(Accident::class);
-        $mockedAccident->method('getAttribute')->willReturn(1);
-
         $generatorMock = $this->getMockBuilder(CaseGeneratorInterface::class)->getMock();
-        $generatorMock->method('createCase')->willReturn($mockedAccident);
+        $generatorMock->method('createCase')->willReturn(1);
 
         $service = new CaseImporterService([
             CaseImporterService::OPTION_PROVIDERS => [$dataProviderMock],

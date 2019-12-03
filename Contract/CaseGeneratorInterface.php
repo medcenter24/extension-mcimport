@@ -18,9 +18,11 @@
 namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\mcCore\App\Accident;
-
+/**
+ * Interface CaseGeneratorInterface
+ * @package medcenter24\McImport\Contract
+ */
 interface CaseGeneratorInterface
 {
-    public function createCase(CaseImporterDataProvider $dataProvider): Accident;
+    public function createCase(CaseImporterDataProvider $dataProvider): int;
 }

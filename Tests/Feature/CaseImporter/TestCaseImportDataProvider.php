@@ -28,9 +28,20 @@ class TestCaseImportDataProvider implements CaseImporterDataProvider
      */
     private $images = [];
 
+    /**
+     * @var string
+     */
+    private $path = 'path to file';
+
     public function init(string $path): CaseImporterDataProvider
     {
+        $this->path = $path;
         return $this;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 
     public function isFit(): bool

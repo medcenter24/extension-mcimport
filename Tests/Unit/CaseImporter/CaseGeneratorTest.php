@@ -51,7 +51,7 @@ use medcenter24\mcCore\Tests\TestCase;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\CaseGeneratorException;
 use medcenter24\McImport\Services\CaseImporter\CaseGenerator;
-use PhpParser\Comment\Doc;
+use medcenter24\McImport\Services\ImportLog\ImportLogService;
 use PHPUnit\Framework\MockObject\MockObject;
 
 class CaseGeneratorTest extends TestCase
@@ -59,19 +59,18 @@ class CaseGeneratorTest extends TestCase
     use DatabaseMigrations;
 
     /**
-     * @expectedException \medcenter24\McImport\Exceptions\CaseGeneratorException
-     * @expectedExceptionMessage Parent accident must be imported before current accident.
      * @throws CaseGeneratorException
      */
     public function testParentWasNotImportedException(): void
     {
+        $this->expectException(CaseGeneratorException::class);
+        $this->expectExceptionMessage('Parent accident must be imported before current accident.');
+
         /** @var CaseImporterDataProvider|MockObject $dataProvider */
         $dataProvider = $this->createMock(CaseImporterDataProvider::class);
         $dataProvider->method('getParentAccidentMarkers')->willReturn(['assistantRefNum' => 'ref-num-assist']);
         /** @var CaseGenerator $generator */
         $generator = new CaseGenerator();
-        // $serviceLocator = $this->
-        // $generator->setServiceLocator($serviceLocator);
         $generator->createCase($dataProvider);
     }
 
@@ -88,9 +87,7 @@ class CaseGeneratorTest extends TestCase
         $dataProvider->method('getParentAccidentMarkers')->willReturn(['assistantRefNum' => 'ref-num-assist']);
 
         $dataProvider->method('getCaseableType')->willReturn(DoctorAccident::class);
-        $mockCurrency = $this->createMock(FinanceCurrency::class);
-        $mockCurrency->method('getAttribute')->willReturn(1);
-        $dataProvider->method('getCurrency')->willReturn($mockCurrency);
+        $dataProvider->method('getCurrency')->willReturn('$');
         $dataProvider->method('getVisitDate')->willReturn('2011-04-17');
         $dataProvider->method('getVisitTime')->willReturn('08:43:00');
         $dataProvider->method('getCaseCreationDate')->willReturn('2011-04-17 08:43:00');
@@ -197,6 +194,7 @@ class CaseGeneratorTest extends TestCase
 
         /** @var CurrencyService|MockObject $mockCurrencyService */
         $mockCurrencyService = $this->createMock(CurrencyService::class);
+        $mockCurrency = $this->createMock(FinanceCurrency::class);
         $mockCurrencyService->method('byMarker')->willReturn($mockCurrency);
 
         /** @var DoctorsService|MockObject $mockDoctorsService */
@@ -227,6 +225,9 @@ class CaseGeneratorTest extends TestCase
         /** @var TmpFileService $mockTmpFileService */
         $mockTmpFileService = $this->createMock(TmpFileService::class);
 
+        /** @var ImportLogService $mockImportLogService */
+        $mockImportLogService = $this->createMock(ImportLogService::class);
+
         /** @var ServiceLocator|MockObject $serviceLocator */
         $serviceLocator = $this->mockServiceLocator([
             PaymentService::class => $mockPaymentService,
@@ -245,13 +246,14 @@ class CaseGeneratorTest extends TestCase
             DoctorSurveyService::class => $mockDoctorSurveyService,
             DocumentService::class => $mockDocumentService,
             TmpFileService::class => $mockTmpFileService,
+            ImportLogService::class => $mockImportLogService,
         ]);
 
         $generator = new CaseGenerator();
         $generator->setServiceLocator($serviceLocator);
         $generator->setUpdatedDate($updatedTime);
-        $accident = $generator->createCase($dataProvider);
+        $accidentId = $generator->createCase($dataProvider);
         // accident
-        self::assertSame(1, $accident->getAttribute('id'));
+        self::assertSame(1, $accidentId);
     }
 }

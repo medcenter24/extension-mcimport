@@ -54,7 +54,7 @@ class SimpleDocxReaderTest extends TestCase
      */
     public function testRead(string $filePath): void
     {
-        self::assertContains('Computer science and informatics', $this->getService()->getText($filePath), 'This text is correct');
+        self::assertStringContainsString('Computer science and informatics', $this->getService()->getText($filePath), 'This text is correct');
     }
 
     /**
