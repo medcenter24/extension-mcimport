@@ -29,7 +29,7 @@ use medcenter24\McImport\Providers\DocxReaderServiceProvider;
 use medcenter24\McImport\Services\CaseImporter\AbstractCaseImportDataProvider;
 
 /**
- * @todo probably will need it on the 2016 templates parsing
+ * @fixme probably will need it on the 2016 templates parsing
  *
  *
  * Class TextDataProvider

@@ -285,7 +285,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             if ($title) {
                 $surveysFormatted[] = [
                     'title' => $title . '.',
-                    'description' => 'test',
+                    'description' => 'import',
                     'disease_code' => ''
                 ];
             }
