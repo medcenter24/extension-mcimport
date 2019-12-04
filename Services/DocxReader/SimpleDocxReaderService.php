@@ -75,16 +75,13 @@ class SimpleDocxReaderService implements DocumentReaderService
      */
     private function readZippedXML(string $archiveFile, string $dataFile): DomDocument
     {
-        Log::info('Open file to read', ['file' => $archiveFile]);
         // Create new ZIP archive
         $zip = new ZipArchive;
 
         // Open received archive file
         if (true === ($zipErr = $zip->open($archiveFile))) {
-            Log::info('Zip was opened', ['file' => $archiveFile]);
             // If done, search for the data file in the archive
             if (($index = $zip->locateName($dataFile)) !== false) {
-                Log::info('Index was found', ['file' => $archiveFile]);
                 // If found, read it to the string
                 $data = $zip->getFromIndex($index);
                 // Close archive file
@@ -93,7 +90,6 @@ class SimpleDocxReaderService implements DocumentReaderService
                 // Skip errors and warnings
                 $xml = new DOMDocument();
                 $xml->loadXML($data, LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING);
-                Log::info('XML was loaded', ['file' => $archiveFile]);
                 return $xml;
             }
             $zip->close();
@@ -111,13 +107,11 @@ class SimpleDocxReaderService implements DocumentReaderService
     {
         $files = [];
 
-        Log::info('Open file to read', ['file' => $archiveFile]);
         // Create new ZIP archive
         $zip = new ZipArchive;
 
         // Open received archive file
         if (true === $zip->open($archiveFile)) {
-            Log::info('Zip was opened', ['file' => $archiveFile]);
             // If done, search for the data file in the archive
             // loop through all the files in the archive
             for ( $i = 0; $i < $zip->numFiles; $i++) {
