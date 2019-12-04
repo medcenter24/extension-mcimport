@@ -107,6 +107,7 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     public function createCase(CaseImporterDataProvider $dataProvider): int
     {
+        $this->log('Case creation started...');
         $this->entity = new ImportingCase();
         
         if ($this->date) {
@@ -240,6 +241,8 @@ class CaseGenerator implements CaseGeneratorInterface
 
         // first status always `new`, now we need to add status `imported`
         $accidentService->setStatus($accident, $this->getAccidentStatus());
+        
+        $this->log('Created case ' . $accident->getAttribute('id'));
         return $accident;
     }
 

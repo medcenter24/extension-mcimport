@@ -82,6 +82,10 @@ class ImportCasesCommand extends Command
         }
         $importerService->setOptions($options);
 
+        if ($this->hasOption('vvv')) {
+            $importerService->getOption(CaseImporter::OPTION_CASE_GENERATOR)->debugModeOn();
+        }
+
         $totalSizeBytes = FileHelper::getSize($path, $fileExtensions, $excludeRules);
         $totalFilesCount = FileHelper::filesCount($path, $fileExtensions, $excludeRules);
 

@@ -40,6 +40,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
     protected const RULE_REQUIRED = 'required';
     protected const RULE_TRUE = 'true';
     protected const RULE_DATE = 'date';
+    protected const RULE_FLOAT = 'float';
 
     /**
      * Cache flag for import errors
@@ -156,6 +157,10 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
                         Carbon::parse($val);
                         $res = true;
                     } catch (Exception $e) {}
+                    break;
+                case self::RULE_FLOAT:
+                    $res = is_float($val);
+                    break;
             }
         } catch (ImporterException $e) {
             $msg = $e->getMessage();
@@ -237,7 +242,9 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getDoctorMedicalBoardingNum' => self::RULE_STRING,
             'getDoctorGender' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getImages' => self::RULE_ARRAY,
-            'getCaseableType' => [self::RULE_STRING, self::RULE_REQUIRED]
+            'getCaseableType' => [self::RULE_STRING, self::RULE_REQUIRED],
+            'getDoctorPaymentPrice' => self::RULE_FLOAT,
+            'getCurrency' => self::RULE_STRING
         ];
     }
 
