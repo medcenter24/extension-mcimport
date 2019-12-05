@@ -107,6 +107,9 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     public function createCase(CaseImporterDataProvider $dataProvider): int
     {
+        // sometimes it could help to proceed images
+        set_time_limit(0);
+
         $this->log('Case creation started...');
         $this->entity = new ImportingCase();
         
