@@ -231,6 +231,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getParentAccidentMarkers' => self::RULE_ARRAY,
             'getVisitTime' => [self::RULE_STRING, self::RULE_DATE],
             'getVisitDate' => [self::RULE_STRING, self::RULE_REQUIRED, self::RULE_DATE],
+            'getCaseCreationDate' => [self::RULE_STRING, self::RULE_REQUIRED, self::RULE_DATE],
             'getVisitCountry' => self::RULE_STRING,
             'getVisitRegion' => self::RULE_STRING,
             'getVisitCity' => self::RULE_STRING,

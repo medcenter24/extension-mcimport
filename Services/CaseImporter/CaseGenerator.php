@@ -238,12 +238,14 @@ class CaseGenerator implements CaseGeneratorInterface
             'handling_time' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
             'contacts' => $this->getDataProvider()->getPatientContacts(),
             'symptoms' => $this->getDataProvider()->getPatientSymptoms(),
-            'created_at' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
-            'updated_at' => $this->getEntity()->getCurrentTime(),
         ]);
 
         // first status always `new`, now we need to add status `imported`
         $accidentService->setStatus($accident, $this->getAccidentStatus());
+
+        $accident->setAttribute('created_at', Carbon::parse($this->getDataProvider()->getCaseCreationDate()));
+        $accident->setAttribute('updated_at', $this->getEntity()->getCurrentTime());
+        $accident->save(['timestamps' => false]);
         
         $this->log('Created case ' . $accident->getAttribute('id'));
         return $accident;
@@ -453,15 +455,20 @@ class CaseGenerator implements CaseGeneratorInterface
     private function createDoctorAccident(): DoctorAccident
     {
         $doctorAccidentService = $this->getServiceLocator()->get(DoctorAccidentService::class);
-        return $doctorAccidentService->create([
+        /** @var DoctorAccident $doctorAccident */
+        $doctorAccident = $doctorAccidentService->create([
             'doctor_id' => $this->getDoctor()->getAttribute('id'),
             'recommendation' => $this->getDataProvider()->getDoctorRecommendation(),
             // other investigations stored in surveys
             'investigation' => $this->getDataProvider()->getAdditionalDoctorInvestigation(),
             'visit_time' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
-            'created_at' => Carbon::parse($this->getDataProvider()->getCaseCreationDate()),
-            'updated_at' => Carbon::parse($this->getEntity()->getCurrentTime()),
         ]);
+
+        $doctorAccident->setAttribute('created_at', Carbon::parse($this->getDataProvider()->getCaseCreationDate()));
+        $doctorAccident->setAttribute('updated_at', Carbon::parse($this->getEntity()->getCurrentTime()));
+        $doctorAccident->save(['timestamps' => false]);
+
+        return $doctorAccident;
     }
 
     /**
@@ -472,9 +479,15 @@ class CaseGenerator implements CaseGeneratorInterface
     {
         /** @var DoctorsService $doctorService */
         $doctorService = $this->getServiceLocator()->get(DoctorsService::class);
-        $doctor = $doctorService->first([
-            'name' => $this->getDataProvider()->getDoctorName(),
-        ]);
+        if ($this->getDataProvider()->getDoctorName()) {
+            $name = $this->getDataProvider()->getDoctorName();
+        } else {
+            $doctorsData = $this->getDataProvider()->getDefaultDoctorData();
+            $name = $doctorsData['name'];
+        }
+
+        $doctor = $doctorService->first(['name' => $name]);
+
         if (!$doctor) {
             if ($this->getDataProvider()->getDoctorName()) {
                 $doctorsData = [
