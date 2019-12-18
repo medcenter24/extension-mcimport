@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -16,34 +15,25 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Contract;
+namespace medcenter24\McImport\Services\CaseImporter;
 
 
-use DOMDocument;
+use medcenter24\McImport\Contract\CaseImporterDataProvider;
 
-interface DocxReaderService
+/**
+ * Transforms data provider to the new case
+ * Class CaseGenerator
+ * @package medcenter24\McImport\Services\CaseImporter
+ */
+class DryCaseGenerator extends CaseGenerator
 {
-    /**
-     * Load file for reading
-     * @return mixed
-     */
-    public function load(): self;
 
     /**
-     * Object with parsed body
-     * @return mixed
+     * @param CaseImporterDataProvider $dataProvider
+     * @return int
      */
-    public function getDom(): DOMDocument;
-
-    /**
-     * Get all text from the document
-     * @return string
-     */
-    public function getText(): string;
-
-    /**
-     * File path
-     * @return string
-     */
-    public function getFilePath(): string;
+    public function createCase(CaseImporterDataProvider $dataProvider): int
+    {
+        return 0;
+    }
 }

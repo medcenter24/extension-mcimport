@@ -18,17 +18,18 @@
 
 namespace medcenter24\McImport\Http\Controllers\Api\V1\Director;
 
+
 use Dingo\Api\Http\Response;
 use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\Http\Controllers\ApiController;
-use medcenter24\mcCore\App\Services\ServiceLocatorTrait;
+use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\mcCore\App\Services\UploaderService;
 use medcenter24\mcCore\App\Transformers\UploadedFileTransformer;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
 use medcenter24\McImport\Contract\CaseImporter;
 use medcenter24\McImport\Exceptions\ImporterException;
-use medcenter24\McImport\Services\CaseImporterService;
+use medcenter24\McImport\Services\CaseImporter\CaseImporterService;
 
 class CasesImporterController extends ApiController
 {
@@ -41,7 +42,6 @@ class CasesImporterController extends ApiController
 
     /**
      * CasesImporterController constructor.
-     * @param CaseImporterService $importerService
      * @param UploaderService $uploaderService
      */
     public function __construct(UploaderService $uploaderService)
@@ -99,7 +99,7 @@ class CasesImporterController extends ApiController
         $importerService = $this->getServiceLocator()->get(CaseImporter::class);
         $importerService->import($path);
         /** @var Accident $accident */
-        $accident = $importerService->getLastImportedAccident();
+        $accident = current($importerService->getImportedAccidents());
         $this->uploaderService->delete($id);
 
         return $this->response->accepted(

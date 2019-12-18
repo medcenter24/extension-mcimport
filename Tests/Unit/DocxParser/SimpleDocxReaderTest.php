@@ -18,10 +18,13 @@
 
 namespace medcenter24\McImport\Tests\Unit\DocxParser;
 
+
+use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RecursiveRegexIterator;
+use ReflectionException;
 use RegexIterator;
 use medcenter24\mcCore\Tests\SamplePath;
 use medcenter24\mcCore\Tests\TestCase;
@@ -47,18 +50,17 @@ class SimpleDocxReaderTest extends TestCase
     /**
      * @param string $filePath
      * @dataProvider getSamples
-     * @return void
+     * @throws InconsistentDataException
      */
-    public function testRead($filePath = ''): void
+    public function testRead(string $filePath): void
     {
-        $this->getService()->load($filePath);
-        self::assertContains('Computer science and informatics', $this->getService()->getText(), 'This text is correct');
+        self::assertStringContainsString('Computer science and informatics', $this->getService()->getText($filePath), 'This text is correct');
     }
 
     /**
      * Array with files for test
      * @return array
-     * @throws \ReflectionException
+     * @throws ReflectionException
      */
     public function getSamples(): array
     {
@@ -74,13 +76,12 @@ class SimpleDocxReaderTest extends TestCase
     }
 
     /**
-     * test file iterator
+     * @throws ReflectionException
      */
-    public function testIterator(): void
+    public function testGetImages(): void
     {
-        $directory = new RecursiveDirectoryIterator($this->getSamplePath());
-        $iterator = new RecursiveIteratorIterator($directory);
-        $regEx = new RegexIterator($iterator, '/^.+\.docx$/ui', RecursiveRegexIterator::ALL_MATCHES);
-        self::assertCount(3, $regEx, 'Files counted correctly');
+        $file = $this->getSampleFile('withImages.docx');
+        $images = $this->getService()->getImages($file);
+        self::assertCount(1, $images);
     }
 }

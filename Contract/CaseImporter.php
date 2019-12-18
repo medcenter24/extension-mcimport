@@ -17,12 +17,27 @@
 namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\mcCore\App\Accident;
+use medcenter24\mcCore\App\Support\Core\ConfigurableInterface;
 
-interface CaseImporter
+interface CaseImporter extends ConfigurableInterface
 {
-    public const DISC_IMPORTS = 'imports';
-    public const CASES_FOLDERS = 'cases';
+    /**
+     * DataProviders that can read source files
+     * The list of the CaseImporterDataProvider
+     */
+    public const OPTION_PROVIDERS = 'providers';
+
+    /**
+     * Generators that can create cases according to read the data by providers
+     * CaseGeneratorInterface
+     */
+    public const OPTION_CASE_GENERATOR = 'case_generator';
+
+    /**
+     * Boolean option - to store or not an imports errors
+     * bool
+     */
+    public const OPTION_WITH_ERRORS = 'saveErrors';
 
     /**
      * Import a file
@@ -37,7 +52,13 @@ interface CaseImporter
     public function getImportableExtensions(): array;
 
     /**
-     * @return Accident
+     * Rules to skip the file
+     * @return array
      */
-    public function getLastImportedAccident(): ?Accident;
+    public function getExcludeRules(): array;
+
+    /**
+     * @return array [] of Accidents
+     */
+    public function getImportedAccidents(): array;
 }

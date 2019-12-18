@@ -22,84 +22,48 @@ namespace medcenter24\McImport\Services\DocxReader;
 use DOMDocument;
 use Illuminate\Support\Facades\Log;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
-use medcenter24\McImport\Contract\DocxReaderService;
+use medcenter24\McImport\Contract\DocumentReaderService;
 use ZipArchive;
 
 /**
- * Very simple driver for reading of the docx files
+ * Very simple driver to extract data from .docx files
  * external sources don't needed, all you need that php
  *
  * Class SimpleDocxReaderService
  * @package medcenter24\mcCore\App\Services\DocxReader
  */
-class SimpleDocxReaderService implements DocxReaderService
+
+class SimpleDocxReaderService implements DocumentReaderService
 {
     /**
-     * Current file
-     * @var string
+     * @param string $filename
+     * @return DOMDocument
+     * @throws InconsistentDataException
      */
-    private $filePath = '';
-
-    /**
-     * Parsed body
-     * @var DOMDocument
-     */
-    private $dom;
-
-    /**
-     * Load file to read service
-     *
-     * @param string $path
-     * @return $this
-     */
-    public function load($path = ''): DocxReaderService
+    public function getDom(string $filename): DOMDocument
     {
-        $this->filePath = $path;
-        return $this;
-    }
-
-    /**
-     * File path
-     * @return string
-     */
-    public function getFilePath(): string
-    {
-        return $this->filePath;
-    }
-
-    /**
-     * dom as it is
-     */
-    public function getDom(): DOMDocument
-    {
-        $this->dom = $this->docx2text($this->filePath);
-        return $this->dom;
+        return $this->readZippedXML($filename, 'word/document.xml');
     }
 
     /**
      * Get only text from the document
+     *
+     * @param string $filename
      * @return string
+     * @throws InconsistentDataException
      */
-    public function getText(): string
+    public function getText(string $filename): string
     {
-        return strip_tags($this->getDom()->saveXML());
-    }
-
-    public function getImages(): array
-    {
-        return $this->getZippedMedia($this->filePath);
+        return strip_tags($this->getDom($filename)->saveXML());
     }
 
     /**
-     * load file
-     *
-     * @param $filename
-     * @return DOMDocument
-     * @throws InconsistentDataException
+     * @param string $filename
+     * @return array
      */
-    private function docx2text($filename): DOMDocument
+    public function getImages(string $filename): array
     {
-        return $this->readZippedXML($filename, 'word/document.xml');
+        return $this->getZippedMedia($filename);
     }
 
     /**
@@ -112,16 +76,13 @@ class SimpleDocxReaderService implements DocxReaderService
      */
     private function readZippedXML(string $archiveFile, string $dataFile): DomDocument
     {
-        Log::info('Open file to read', ['file' => $archiveFile]);
         // Create new ZIP archive
         $zip = new ZipArchive;
 
         // Open received archive file
         if (true === ($zipErr = $zip->open($archiveFile))) {
-            Log::info('Zip was opened', ['file' => $archiveFile]);
             // If done, search for the data file in the archive
             if (($index = $zip->locateName($dataFile)) !== false) {
-                Log::info('Index was found', ['file' => $archiveFile]);
                 // If found, read it to the string
                 $data = $zip->getFromIndex($index);
                 // Close archive file
@@ -130,7 +91,6 @@ class SimpleDocxReaderService implements DocxReaderService
                 // Skip errors and warnings
                 $xml = new DOMDocument();
                 $xml->loadXML($data, LIBXML_NOENT | LIBXML_XINCLUDE | LIBXML_NOERROR | LIBXML_NOWARNING);
-                Log::info('XML was loaded', ['file' => $archiveFile]);
                 return $xml;
             }
             $zip->close();
@@ -147,26 +107,23 @@ class SimpleDocxReaderService implements DocxReaderService
     private function getZippedMedia(string $archiveFile): array
     {
         $files = [];
-
-        Log::info('Open file to read', ['file' => $archiveFile]);
         // Create new ZIP archive
         $zip = new ZipArchive;
 
         // Open received archive file
         if (true === $zip->open($archiveFile)) {
-            Log::info('Zip was opened', ['file' => $archiveFile]);
             // If done, search for the data file in the archive
             // loop through all the files in the archive
             for ( $i = 0; $i < $zip->numFiles; $i++) {
                 $entry = $zip->statIndex($i);
-                // is it an image
-                if ( $entry['size'] > 0 && preg_match('#\.(jpg|gif|png|jpeg|bmp)$#i', $entry['name'] )) {
+                // is it an image?
+                if ( $entry['size'] > 0 && preg_match('#\.(jpg|gif|png|jpeg|bmp|wmf)$#i', $entry['name'] )) {
                     $file = $zip->getFromIndex($i);
-                    if( $file ){
+                    if( $file ) {
                         $ext = pathinfo( basename( $entry['name'] ) . PHP_EOL, PATHINFO_EXTENSION);
                         $files[] = [
-                            'name'  => $entry['name'],
-                            'ext'   => $ext,
+                            'name'  => trim($entry['name']),
+                            'ext'   => trim($ext),
                             'imageContent' => $file,
                         ];
                     }

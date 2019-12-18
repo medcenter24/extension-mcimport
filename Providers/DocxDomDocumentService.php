@@ -4,7 +4,6 @@
  * modify it under the terms of the GNU General Public License
  * as published by the Free Software Foundation; under version 2
  * of the License (non-upgradable).
- *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
@@ -18,22 +17,12 @@
 
 namespace medcenter24\McImport\Providers;
 
+
 use Illuminate\Support\ServiceProvider;
-use medcenter24\McImport\Services\DocxReader\SimpleDocxReaderService;
+use medcenter24\mcCore\App\Services\DomDocumentService;
 
-class DocxReaderServiceProvider extends ServiceProvider
+class DocxDomDocumentService extends ServiceProvider
 {
-    /**
-     * Called before routes are registered.
-     *
-     * Register any model bindings or pattern based filters.
-     *
-     * @return void
-     */
-    public function boot(): void
-    {
-    }
-
     /**
      * Register the application services.
      *
@@ -42,7 +31,10 @@ class DocxReaderServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(__CLASS__, static function() {
-            return new SimpleDocxReaderService();
+            return new DomDocumentService([
+                DomDocumentService::STRIP_STRING => true,
+                DomDocumentService::CONFIG_WITHOUT_ATTRIBUTES => true,
+            ]);
         });
     }
 }
