@@ -32,6 +32,7 @@ use ZipArchive;
  * Class SimpleDocxReaderService
  * @package medcenter24\mcCore\App\Services\DocxReader
  */
+
 class SimpleDocxReaderService implements DocumentReaderService
 {
     /**
@@ -106,7 +107,6 @@ class SimpleDocxReaderService implements DocumentReaderService
     private function getZippedMedia(string $archiveFile): array
     {
         $files = [];
-
         // Create new ZIP archive
         $zip = new ZipArchive;
 
@@ -116,7 +116,7 @@ class SimpleDocxReaderService implements DocumentReaderService
             // loop through all the files in the archive
             for ( $i = 0; $i < $zip->numFiles; $i++) {
                 $entry = $zip->statIndex($i);
-                // is it an image
+                // is it an image?
                 if ( $entry['size'] > 0 && preg_match('#\.(jpg|gif|png|jpeg|bmp|wmf)$#i', $entry['name'] )) {
                     $file = $zip->getFromIndex($i);
                     if( $file ) {

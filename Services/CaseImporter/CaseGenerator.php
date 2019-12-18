@@ -483,6 +483,9 @@ class CaseGenerator implements CaseGeneratorInterface
             $name = $this->getDataProvider()->getDoctorName();
         } else {
             $doctorsData = $this->getDataProvider()->getDefaultDoctorData();
+            if (!is_array($doctorsData) || !array_key_exists('name', $doctorsData)) {
+                throw new CaseGeneratorException('Default doctors data not provided');
+            }
             $name = $doctorsData['name'];
         }
 

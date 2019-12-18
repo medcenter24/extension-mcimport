@@ -19,6 +19,7 @@ namespace medcenter24\McImport\Tests\Unit\CaseImporter;
 
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
+use Illuminate\Support\Carbon;
 use medcenter24\mcCore\App\Accident;
 use medcenter24\mcCore\App\AccidentStatus;
 use medcenter24\mcCore\App\AccidentType;
@@ -85,7 +86,6 @@ class CaseGeneratorTest extends TestCase
         /** @var CaseImporterDataProvider|MockObject $dataProvider */
         $dataProvider = $this->createMock(CaseImporterDataProvider::class);
         $dataProvider->method('getParentAccidentMarkers')->willReturn(['assistantRefNum' => 'ref-num-assist']);
-
         $dataProvider->method('getCaseableType')->willReturn(DoctorAccident::class);
         $dataProvider->method('getCurrency')->willReturn('$');
         $dataProvider->method('getVisitDate')->willReturn('2011-04-17');
@@ -96,6 +96,13 @@ class CaseGeneratorTest extends TestCase
         $dataProvider->method('getAssistantTitle')->willReturn('fake assistant company');
         $dataProvider->method('getAssistantAddress')->willReturn('address string');
         $dataProvider->method('getPatientSymptoms')->willReturn('Patient symptoms');
+        $dataProvider->method('getDefaultDoctorData')->willReturn([
+            'name' => 'Doc Name',
+            'description' => 'doc info',
+            'ref_key' => 'dn',
+            'gender' => 'male',
+            'medical_board_num' => '123123123',
+        ]);
 
         /** @var PaymentService|MockObject $mockPaymentService */
         $mockPaymentService = $this->createMock(PaymentService::class);
@@ -113,10 +120,9 @@ class CaseGeneratorTest extends TestCase
         $mockAccidentService->method('getByAssistantRefNum')->willReturn($mockParentAccident);
 
         /** @var Accident|MockObject $mockResultCreatedAccident */
-        $mockAccidentService->method('create')->willReturnCallback(static function ($params) use ($self, $updatedTime) {
-            $eqParams = $params;
-            $eqParams['handling_time'] = $eqParams['handling_time']->format('Y-m-d H:i:s');
-            $eqParams['created_at'] = $eqParams['created_at']->format('Y-m-d H:i:s');
+        $mockAccidentService->method('create')->willReturnCallback(static function ($params) use ($self) {
+            unset($params['handling_time'], $params['created_at']); // dates will be changed on creation, has no sense to check it
+
             $self->assertSame([
                 'created_by' => null,
                 'parent_id' => 1,
@@ -130,19 +136,16 @@ class CaseGeneratorTest extends TestCase
                 'form_report_id' => null,
                 'city_id' => 1,
                 'caseable_payment_id' => 1,
-                'income_payment_id' => null,
+                'income_payment_id' => 1,
                 'assistant_payment_id' => null,
                 'caseable_id' => 1,
                 'caseable_type' => DoctorAccident::class,
                 'ref_num' => 'ref-num',
                 'title' => 'i_20110417084300_doctor_1',
                 'address' => '',
-                'handling_time' => '2011-04-17 08:43:00',
                 'contacts' => '',
                 'symptoms' => 'Patient symptoms',
-                'created_at' => '2011-04-17 08:43:00',
-                'updated_at' => $updatedTime,
-            ], $eqParams);
+            ], $params);
             $accidentService = new AccidentService();
             return $accidentService->create($params);
         });

@@ -97,7 +97,9 @@ class CaseGeneratorIntegrationTest extends TestCase
         $caseablePaymentCurrency = $caseablePayment->getAttribute('currency');
         $this->assertSame('{"id":1,"title":"Euro","code":"eu","ico":"fa fa-euro"}', $caseablePaymentCurrency->toJson());
 
-        $this->assertNull($accident->getAttribute('incomePayment'), 'No income provided');
+        $payment = $accident->getAttribute('incomePayment');
+        $this->assertSame('0', $payment->getAttribute('value'), 'Income generated with correct value');
+        $this->assertSame(2, $payment->getAttribute('id'), 'Income generated with correct id');
         $this->assertNull($accident->getAttribute('paymentFromAssistant'), 'No payment from assistant provided');
         $this->assertCount(0, $accident->getAttribute('checkpoints'), 'No checkpoints in test');
 
@@ -166,24 +168,24 @@ class CaseGeneratorIntegrationTest extends TestCase
         $this->assertCount(0, $caseableServices);
         $accidentServices = $accident->getAttribute('services');
         $this->assertCount(2, $accidentServices);
-        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_code":""}', $accidentServices->get(0)->toJson());
-        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_code":""}', $accidentServices->get(1)->toJson());
+        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_code":"","status":"active"}', $accidentServices->get(0)->toJson());
+        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_code":"","status":"active"}', $accidentServices->get(1)->toJson());
 
         $diagnostics = $caseable->getAttribute('diagnostics');
         $this->assertCount(0, $diagnostics);
         $diagnostics = $accident->getAttribute('diagnostics');
         $this->assertCount(2, $diagnostics);
-        $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_code":"","description":"test"}', $diagnostics->get(0)->toJson());
-        $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_code":"","description":"test"}', $diagnostics->get(1)->toJson());
+        $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_code":"","status":"active","description":"test"}', $diagnostics->get(0)->toJson());
+        $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_code":"","status":"active","description":"test"}', $diagnostics->get(1)->toJson());
 
         $surveys = $caseable->getAttribute('surveys');
         $this->assertCount(0, $surveys);
         $surveys = $accident->getAttribute('surveys');
         $this->assertCount(4, $surveys);
-        $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_code":""}', $surveys->get(0)->toJson());
-        $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_code":""}', $surveys->get(1)->toJson());
-        $this->assertSame('{"id":3,"title":"Neurological status is normal.","description":"","disease_code":""}', $surveys->get(2)->toJson());
-        $this->assertSame('{"id":4,"title":"Otherwise, there is no pathology.","description":"test","disease_code":""}', $surveys->get(3)->toJson());
+        $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_code":"","status":"active"}', $surveys->get(0)->toJson());
+        $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_code":"","status":"active"}', $surveys->get(1)->toJson());
+        $this->assertSame('{"id":3,"title":"Neurological status is normal.","description":"","disease_code":"","status":"active"}', $surveys->get(2)->toJson());
+        $this->assertSame('{"id":4,"title":"Otherwise, there is no pathology.","description":"test","disease_code":"","status":"active"}', $surveys->get(3)->toJson());
 
         $documents = $caseable->getAttribute('documents');
         $this->assertCount(0, $documents);
