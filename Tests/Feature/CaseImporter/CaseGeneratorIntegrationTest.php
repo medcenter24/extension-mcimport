@@ -91,14 +91,14 @@ class CaseGeneratorIntegrationTest extends TestCase
 
         /** @var Payment $caseablePayment */
         $caseablePayment = $accident->getAttribute('paymentToCaseable');
-        $this->assertSame('{"created_by":"1","value":"70","currency_id":"1","fixed":"1","description":""}', $caseablePayment->toJson());
+        $this->assertSame('{"created_by":"1","value":"0","currency_id":"1","fixed":"1","description":""}', $caseablePayment->toJson());
 
         /** @var FinanceCurrency $caseablePaymentCurrency */
         $caseablePaymentCurrency = $caseablePayment->getAttribute('currency');
         $this->assertSame('{"id":1,"title":"Euro","code":"eu","ico":"fa fa-euro"}', $caseablePaymentCurrency->toJson());
 
         $payment = $accident->getAttribute('incomePayment');
-        $this->assertSame('0', $payment->getAttribute('value'), 'Income generated with correct value');
+        $this->assertSame('70', $payment->getAttribute('value'), 'Income generated with correct value');
         $this->assertSame(2, $payment->getAttribute('id'), 'Income generated with correct id');
         $this->assertNull($accident->getAttribute('paymentFromAssistant'), 'No payment from assistant provided');
         $this->assertCount(0, $accident->getAttribute('checkpoints'), 'No checkpoints in test');

@@ -244,7 +244,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getDoctorGender' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getImages' => self::RULE_ARRAY,
             'getCaseableType' => [self::RULE_STRING, self::RULE_REQUIRED],
-            'getDoctorPaymentPrice' => self::RULE_FLOAT,
+            'getIncomePrice' => self::RULE_FLOAT,
             'getCurrency' => self::RULE_STRING
         ];
     }

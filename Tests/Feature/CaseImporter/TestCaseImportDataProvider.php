@@ -157,7 +157,7 @@ class TestCaseImportDataProvider implements CaseImporterDataProvider
         ];
     }
 
-    public function getDoctorPaymentPrice(): float
+    public function getIncomePrice(): float
     {
         return 70.0;
     }

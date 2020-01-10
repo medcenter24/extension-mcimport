@@ -174,7 +174,7 @@ interface CaseImporterDataProvider extends DebugLoggerContract
      * Total price of the case
      * @return float
      */
-    public function getDoctorPaymentPrice(): float;
+    public function getIncomePrice(): float;
 
     /**
      * Date of the creation

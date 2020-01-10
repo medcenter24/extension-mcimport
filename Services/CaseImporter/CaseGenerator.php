@@ -384,7 +384,7 @@ class CaseGenerator implements CaseGeneratorInterface
         $paymentService = $this->getServiceLocator()->get(PaymentService::class);
         /** @var Payment $payment */
         $payment = $paymentService->create([
-            'value' => $this->getDataProvider()->getDoctorPaymentPrice(),
+            'value' => 0,
             'currency_id' => $this->getCurrency()->getAttribute('id'),
             'fixed' => 1,
             'created_by' => $this->getImporterUser()->getAttribute('id'),
@@ -403,7 +403,7 @@ class CaseGenerator implements CaseGeneratorInterface
         $paymentService = $this->getServiceLocator()->get(PaymentService::class);
         /** @var Payment $payment */
         $payment = $paymentService->create([
-            'value' => 0,
+            'value' => $this->getDataProvider()->getIncomePrice(),
             'currency_id' => $this->getCurrency()->getAttribute('id'),
             'fixed' => 1,
             'created_by' => $this->getImporterUser()->getAttribute('id'),
