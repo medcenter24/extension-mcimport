@@ -616,7 +616,7 @@ class CaseGenerator implements CaseGeneratorInterface
         /** @var AbstractModelService|DoctorServiceService $service */
         $service = $this->getServiceLocator()->get(DoctorServiceService::class);
         /** @var MorphToMany $model */
-        $model = $this->getEntity()->getAccident()->services();
+        $model = $this->getEntity()->getCaseable()->services();
 
         $ids = $this->createFormattedDocResourcesIds($dataList, $service);
         $this->bindMorphed($ids, $model);
@@ -632,7 +632,7 @@ class CaseGenerator implements CaseGeneratorInterface
         /** @var AbstractModelService|DiagnosticService $service */
         $service = $this->getServiceLocator()->get(DiagnosticService::class);
         /** @var MorphToMany $model */
-        $model = $this->getEntity()->getAccident()->diagnostics();
+        $model = $this->getEntity()->getCaseable()->diagnostics();
         $ids = $this->createFormattedDocResourcesIds($dataList, $service);
         $this->bindMorphed($ids, $model);
     }
@@ -645,7 +645,7 @@ class CaseGenerator implements CaseGeneratorInterface
         $dataList = $this->getDataProvider()->getDoctorSurveys();
         /** @var DoctorSurveyService $service */
         $service = $this->getServiceLocator()->get(DoctorSurveyService::class);
-        $model = $this->getEntity()->getAccident()->surveys();
+        $model = $this->getEntity()->getCaseable()->surveys();
 
         // we have to exclude duplications
         $allObjs = [];
