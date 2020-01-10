@@ -165,22 +165,16 @@ class CaseGeneratorIntegrationTest extends TestCase
         $this->assertSame('{"id":2,"title":"imported","type":"accident"}', $accidentStatus->toJson());
 
         $caseableServices = $caseable->getAttribute('services');
-        $this->assertCount(0, $caseableServices);
-        $accidentServices = $accident->getAttribute('services');
-        $this->assertCount(2, $accidentServices);
-        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_code":"","status":"active"}', $accidentServices->get(0)->toJson());
-        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_code":"","status":"active"}', $accidentServices->get(1)->toJson());
+        $this->assertCount(2, $caseableServices);
+        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_code":"","status":"active"}', $caseableServices->get(0)->toJson());
+        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_code":"","status":"active"}', $caseableServices->get(1)->toJson());
 
         $diagnostics = $caseable->getAttribute('diagnostics');
-        $this->assertCount(0, $diagnostics);
-        $diagnostics = $accident->getAttribute('diagnostics');
         $this->assertCount(2, $diagnostics);
         $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_code":"","status":"active","description":"test"}', $diagnostics->get(0)->toJson());
         $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_code":"","status":"active","description":"test"}', $diagnostics->get(1)->toJson());
 
         $surveys = $caseable->getAttribute('surveys');
-        $this->assertCount(0, $surveys);
-        $surveys = $accident->getAttribute('surveys');
         $this->assertCount(4, $surveys);
         $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_code":"","status":"active"}', $surveys->get(0)->toJson());
         $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_code":"","status":"active"}', $surveys->get(1)->toJson());
