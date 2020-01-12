@@ -643,8 +643,6 @@ class CaseGenerator implements CaseGeneratorInterface
     private function addSurveys(): void
     {
         $dataList = $this->getDataProvider()->getDoctorSurveys();
-        /** @var DoctorSurveyService $service */
-        $service = $this->getServiceLocator()->get(DoctorSurveyService::class);
         $model = $this->getEntity()->getCaseable()->surveys();
 
         // we have to exclude duplications
@@ -659,18 +657,34 @@ class CaseGenerator implements CaseGeneratorInterface
                     throw new CaseGeneratorException('Undefined title of the resource');
                 }
 
-                /** @var DoctorSurvey $obj */
-                $obj = $service->byTitleLettersOrCreate([
-                    'created_by' => $this->getImporterUser()->getAttribute('id'),
-                    'title' => $dataItem['title'],
-                    'description' => $dataItem['description'] ?? '',
-                    'disease_code' => $dataItem['disease_code'] ?? '',
-                ]);
-                $allObjs[] = $obj->getAttribute('id');
+                if (Str::length($dataItem['title']) > 180 && mb_stripos($dataItem['title'], ',') !== false) {
+                    foreach (explode(',', $dataItem['title']) as $title) {
+                        $allObjs[] = $this
+                            ->addSurvey($title, $dataItem['description'] ?? '', $dataItem['disease_code'] ?? '')
+                            ->getAttribute('id');
+                    }
+                } else {
+                    $allObjs[] = $this
+                        ->addSurvey($dataItem['title'], $dataItem['description'] ?? '', $dataItem['disease_code'] ?? '')
+                        ->getAttribute('id');
+                }
             }
         }
 
         $this->bindMorphed($allObjs, $model);
+    }
+
+    private function addSurvey(string $title = '', string $description='', string $disease=''): DoctorSurvey
+    {
+        /** @var DoctorSurveyService $service */
+        $service = $this->getServiceLocator()->get(DoctorSurveyService::class);
+        /** @var DoctorSurvey $obj */
+        return $service->byTitleLettersOrCreate([
+            'created_by' => $this->getImporterUser()->getAttribute('id'),
+            'title' => Str::limit($title, 250),
+            'description' => $description,
+            'disease_code' => $disease,
+        ]);
     }
 
     /**
