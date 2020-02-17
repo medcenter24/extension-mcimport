@@ -253,12 +253,12 @@ class TestCaseImportDataProvider implements CaseImporterDataProvider
             [
                 'title' => 'General condition is satisfactory.',
                 'description' => 'test',
-                'disease_code' => ''
+                'disease_id' => 0,
             ],
             [
                 'title' => 'Heart tones are rhythmic, no pathological noise.',
                 'description' => 'test',
-                'disease_code' => ''
+                'disease_id' => 0,
             ],
             [
                 'title' => 'Neurological status is normal.',

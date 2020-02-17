@@ -28,6 +28,7 @@ use medcenter24\mcCore\App\AccidentType;
 use medcenter24\mcCore\App\Assistant;
 use medcenter24\mcCore\App\City;
 use medcenter24\mcCore\App\Country;
+use medcenter24\mcCore\App\Disease;
 use medcenter24\mcCore\App\Doctor;
 use medcenter24\mcCore\App\DoctorAccident;
 use medcenter24\mcCore\App\DoctorSurvey;
@@ -597,7 +598,7 @@ class CaseGenerator implements CaseGeneratorInterface
                     'created_by' => $this->getImporterUser()->getAttribute('id'),
                     'title' => $dataItem['title'],
                     'description' => $dataItem['description'] ?? '',
-                    'disease_code' => $dataItem['disease_code'] ?? '',
+                    'disease_id' => $dataItem['disease_id'] ?? 0,
                 ]);
                 $allObjs[] = $obj->getAttribute('id');
             }
@@ -660,12 +661,12 @@ class CaseGenerator implements CaseGeneratorInterface
                 if (Str::length($dataItem['title']) > 180 && mb_stripos($dataItem['title'], ',') !== false) {
                     foreach (explode(',', $dataItem['title']) as $title) {
                         $allObjs[] = $this
-                            ->addSurvey($title, $dataItem['description'] ?? '', $dataItem['disease_code'] ?? '')
+                            ->addSurvey($title, $dataItem['description'] ?? '', $dataItem['disease_id'] ?? '')
                             ->getAttribute('id');
                     }
                 } else {
                     $allObjs[] = $this
-                        ->addSurvey($dataItem['title'], $dataItem['description'] ?? '', $dataItem['disease_code'] ?? '')
+                        ->addSurvey($dataItem['title'], $dataItem['description'] ?? '', $dataItem['disease_id'] ?? 0)
                         ->getAttribute('id');
                 }
             }
@@ -678,12 +679,16 @@ class CaseGenerator implements CaseGeneratorInterface
     {
         /** @var DoctorSurveyService $service */
         $service = $this->getServiceLocator()->get(DoctorSurveyService::class);
+
+        $diseaseService = $this->getServiceLocator()->get(DiseaseService::class);
+        /** @var Disease $diseaseModel */
+        $diseaseModel = $diseaseService->create($disease);
         /** @var DoctorSurvey $obj */
         return $service->byTitleLettersOrCreate([
             'created_by' => $this->getImporterUser()->getAttribute('id'),
             'title' => Str::limit($title, 250),
             'description' => $description,
-            'disease_code' => $disease,
+            'disease_id' => $diseaseModel ? $diseaseModel->getAttribute('id') : 0,
         ]);
     }
 

@@ -166,20 +166,20 @@ class CaseGeneratorIntegrationTest extends TestCase
 
         $caseableServices = $caseable->getAttribute('services');
         $this->assertCount(2, $caseableServices);
-        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_code":"","status":"active"}', $caseableServices->get(0)->toJson());
-        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_code":"","status":"active"}', $caseableServices->get(1)->toJson());
+        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_id":"0","status":"active"}', $caseableServices->get(0)->toJson());
+        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_id":"0","status":"active"}', $caseableServices->get(1)->toJson());
 
         $diagnostics = $caseable->getAttribute('diagnostics');
         $this->assertCount(2, $diagnostics);
-        $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_code":"","status":"active","description":"test"}', $diagnostics->get(0)->toJson());
-        $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_code":"","status":"active","description":"test"}', $diagnostics->get(1)->toJson());
+        $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_id":"0","status":"active","description":"test"}', $diagnostics->get(0)->toJson());
+        $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_id":"0","status":"active","description":"test"}', $diagnostics->get(1)->toJson());
 
         $surveys = $caseable->getAttribute('surveys');
         $this->assertCount(4, $surveys);
-        $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_code":"","status":"active"}', $surveys->get(0)->toJson());
-        $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_code":"","status":"active"}', $surveys->get(1)->toJson());
-        $this->assertSame('{"id":3,"title":"Neurological status is normal.","description":"","disease_code":"","status":"active"}', $surveys->get(2)->toJson());
-        $this->assertSame('{"id":4,"title":"Otherwise, there is no pathology.","description":"test","disease_code":"","status":"active"}', $surveys->get(3)->toJson());
+        $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_id":"0","status":"active"}', $surveys->get(0)->toJson());
+        $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_id":"0","status":"active"}', $surveys->get(1)->toJson());
+        $this->assertSame('{"id":3,"title":"Neurological status is normal.","description":"","disease_id":"0","status":"active"}', $surveys->get(2)->toJson());
+        $this->assertSame('{"id":4,"title":"Otherwise, there is no pathology.","description":"test","disease_id":"0","status":"active"}', $surveys->get(3)->toJson());
 
         $documents = $caseable->getAttribute('documents');
         $this->assertCount(0, $documents);

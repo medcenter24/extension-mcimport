@@ -273,7 +273,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
      * [
      *   'title' => '',
      *   'description' => '',
-     *   'disease_code' => '',
+     *   'disease_id' => 0,
      * ]
      */
     public function getDoctorSurveys(): array
@@ -287,7 +287,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
                 $surveysFormatted[] = [
                     'title' => $title . '.',
                     'description' => 'import',
-                    'disease_code' => ''
+                    'disease_id' => 0,
                 ];
             }
         }
