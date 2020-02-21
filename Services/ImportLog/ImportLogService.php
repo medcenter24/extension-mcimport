@@ -1,4 +1,5 @@
 <?php
+
 /**
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -15,8 +16,9 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services\ImportLog;
+declare(strict_types = 1);
 
+namespace medcenter24\McImport\Services\ImportLog;
 
 use Exception;
 use medcenter24\mcCore\App\Accident;
@@ -26,6 +28,39 @@ use medcenter24\McImport\Entities\ImportLog;
 
 class ImportLogService extends AbstractModelService
 {
+    public const FIELD_FILENAME = 'filename';
+    public const FIELD_ACCIDENT_ID = 'accident_id';
+    public const FIELD_INTERNAL_REF_NUM = 'internal_ref_num';
+    public const FIELD_EXTERNAL_REF_NUM = 'external_ref_num';
+    public const FIELD_DATA_PROVIDER = 'data_provider';
+    public const FIELD_STATUS = 'status';
+
+    public const FILLABLE = [
+        self::FIELD_FILENAME,
+        self::FIELD_ACCIDENT_ID,
+        self::FIELD_INTERNAL_REF_NUM,
+        self::FIELD_EXTERNAL_REF_NUM,
+        self::FIELD_DATA_PROVIDER,
+        self::FIELD_STATUS,
+    ];
+
+    public const UPDATABLE = [
+        self::FIELD_FILENAME,
+        self::FIELD_ACCIDENT_ID,
+        self::FIELD_INTERNAL_REF_NUM,
+        self::FIELD_EXTERNAL_REF_NUM,
+        self::FIELD_DATA_PROVIDER,
+        self::FIELD_STATUS,
+    ];
+
+    public const VISIBLE = [
+        self::FIELD_FILENAME,
+        self::FIELD_ACCIDENT_ID,
+        self::FIELD_INTERNAL_REF_NUM,
+        self::FIELD_EXTERNAL_REF_NUM,
+        self::FIELD_DATA_PROVIDER,
+        self::FIELD_STATUS,
+    ];
 
     /**
      * Write log
@@ -44,12 +79,12 @@ class ImportLogService extends AbstractModelService
         }
 
         $this->create([
-            'filename' => $filename,
-            'accident_id' => $accident ? $accident->getAttribute('id') : 0,
-            'internal_ref_num' => $refNum,
-            'external_ref_num' => $extRefNum,
-            'data_provider' => get_class($dataProvider),
-            'status' => $status,
+            self::FIELD_FILENAME => $filename,
+            self::FIELD_ACCIDENT_ID => $accident ? $accident->getAttribute('id') : 0,
+            self::FIELD_INTERNAL_REF_NUM => $refNum,
+            self::FIELD_EXTERNAL_REF_NUM => $extRefNum,
+            self::FIELD_DATA_PROVIDER => get_class($dataProvider),
+            self::FIELD_STATUS => $status,
         ]);
     }
 
@@ -60,7 +95,7 @@ class ImportLogService extends AbstractModelService
      */
     public function isImported(string $path): bool
     {
-        return $this->count(['filename' => $path]) > 0;
+        return $this->count([self::FIELD_FILENAME => $path]) > 0;
     }
 
     /**
@@ -77,15 +112,20 @@ class ImportLogService extends AbstractModelService
      * (different storage have different rules, so it is correct to set defaults instead of nothing)
      * @return array
      */
-    protected function getRequiredFields(): array
+    protected function getFillableFieldDefaults(): array
     {
         return [
-            'filename' => '',
-            'accident_id' => 0,
-            'internal_ref_num' => '',
-            'external_ref_num' => '',
-            'data_provider' => '',
-            'status' => '',
+            self::FIELD_FILENAME => '',
+            self::FIELD_ACCIDENT_ID => 0,
+            self::FIELD_INTERNAL_REF_NUM => '',
+            self::FIELD_EXTERNAL_REF_NUM => '',
+            self::FIELD_DATA_PROVIDER => '',
+            self::FIELD_STATUS => '',
         ];
+    }
+
+    protected function getUpdatableFields(): array
+    {
+        return self::UPDATABLE;
     }
 }
