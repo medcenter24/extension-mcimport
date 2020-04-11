@@ -20,34 +20,34 @@ namespace medcenter24\McImport\Tests\Unit\CaseImporter;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Support\Carbon;
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\AccidentStatus;
-use medcenter24\mcCore\App\AccidentType;
-use medcenter24\mcCore\App\Assistant;
-use medcenter24\mcCore\App\City;
-use medcenter24\mcCore\App\Doctor;
-use medcenter24\mcCore\App\DoctorAccident;
-use medcenter24\mcCore\App\FinanceCurrency;
-use medcenter24\mcCore\App\Patient;
-use medcenter24\mcCore\App\Payment;
-use medcenter24\mcCore\App\Services\AccidentService;
-use medcenter24\mcCore\App\Services\AccidentStatusesService;
-use medcenter24\mcCore\App\Services\AccidentTypeService;
-use medcenter24\mcCore\App\Services\AssistantService;
-use medcenter24\mcCore\App\Services\CityService;
+use medcenter24\mcCore\App\Entity\Accident;
+use medcenter24\mcCore\App\Entity\AccidentStatus;
+use medcenter24\mcCore\App\Entity\AccidentType;
+use medcenter24\mcCore\App\Entity\Assistant;
+use medcenter24\mcCore\App\Entity\City;
+use medcenter24\mcCore\App\Entity\Doctor;
+use medcenter24\mcCore\App\Entity\DoctorAccident;
+use medcenter24\mcCore\App\Entity\FinanceCurrency;
+use medcenter24\mcCore\App\Entity\Patient;
+use medcenter24\mcCore\App\Entity\Payment;
+use medcenter24\mcCore\App\Services\Entity\AccidentService;
+use medcenter24\mcCore\App\Services\Entity\AccidentStatusService;
+use medcenter24\mcCore\App\Services\Entity\AccidentTypeService;
+use medcenter24\mcCore\App\Services\Entity\AssistantService;
+use medcenter24\mcCore\App\Services\Entity\CityService;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocator;
-use medcenter24\mcCore\App\Services\CurrencyService;
-use medcenter24\mcCore\App\Services\DiagnosticService;
-use medcenter24\mcCore\App\Services\DoctorAccidentService;
-use medcenter24\mcCore\App\Services\DoctorServiceService;
-use medcenter24\mcCore\App\Services\DoctorsService;
-use medcenter24\mcCore\App\Services\DoctorSurveyService;
-use medcenter24\mcCore\App\Services\DocumentService;
+use medcenter24\mcCore\App\Services\Entity\CurrencyService;
+use medcenter24\mcCore\App\Services\Entity\DiagnosticService;
+use medcenter24\mcCore\App\Services\Entity\DoctorAccidentService;
+use medcenter24\mcCore\App\Services\Entity\ServiceService;
+use medcenter24\mcCore\App\Services\Entity\DoctorService;
+use medcenter24\mcCore\App\Services\Entity\SurveyService;
+use medcenter24\mcCore\App\Services\Entity\DocumentService;
 use medcenter24\mcCore\App\Services\File\TmpFileService;
-use medcenter24\mcCore\App\Services\PatientService;
-use medcenter24\mcCore\App\Services\PaymentService;
-use medcenter24\mcCore\App\Services\UserService;
-use medcenter24\mcCore\App\User;
+use medcenter24\mcCore\App\Services\Entity\PatientService;
+use medcenter24\mcCore\App\Services\Entity\PaymentService;
+use medcenter24\mcCore\App\Services\Entity\UserService;
+use medcenter24\mcCore\App\Entity\User;
 use medcenter24\mcCore\Tests\TestCase;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Exceptions\CaseGeneratorException;
@@ -164,8 +164,8 @@ class CaseGeneratorTest extends TestCase
         $mockAccidentType->method('getAttribute')->willReturn(1);
         $mockAccidentTypeService->method('firstOrCreate')->willReturn($mockAccidentType);
 
-        /** @var AccidentStatusesService|MockObject $mockAccidentStatusesService */
-        $mockAccidentStatusesService = $this->createMock(AccidentStatusesService::class);
+        /** @var AccidentStatusService|MockObject $mockAccidentStatusesService */
+        $mockAccidentStatusesService = $this->createMock(AccidentStatusService::class);
         /** @var AccidentStatus|MockObject $mockAccidentStatus */
         $mockAccidentStatus = $this->createMock(AccidentStatus::class);
         $mockAccidentStatus->method('getAttribute')->willReturn(1);
@@ -200,8 +200,8 @@ class CaseGeneratorTest extends TestCase
         $mockCurrency = $this->createMock(FinanceCurrency::class);
         $mockCurrencyService->method('byMarker')->willReturn($mockCurrency);
 
-        /** @var DoctorsService|MockObject $mockDoctorsService */
-        $mockDoctorsService = $this->createMock(DoctorsService::class);
+        /** @var DoctorService|MockObject $mockDoctorsService */
+        $mockDoctorsService = $this->createMock(DoctorService::class);
         /** @var Doctor|MockObject $mockDoctor */
         $mockDoctor = $this->createMock(Doctor::class);
         $mockDoctor->method('getAttribute')->willReturn(1);
@@ -213,14 +213,14 @@ class CaseGeneratorTest extends TestCase
         $mockUser = $this->createMock(User::class);
         $mockUserService->method('firstOrCreate')->willReturn($mockUser);
 
-        /** @var DoctorServiceService|MockObject $mockDoctorServiceService */
-        $mockDoctorServiceService = $this->createMock(DoctorServiceService::class);
+        /** @var ServiceService|MockObject $mockDoctorServiceService */
+        $mockDoctorServiceService = $this->createMock(ServiceService::class);
 
         /** @var DiagnosticService|MockObject $mockDiagnosticService */
         $mockDiagnosticService = $this->createMock(DiagnosticService::class);
 
-        /** @var DoctorSurveyService $mockDoctorSurveyService */
-        $mockDoctorSurveyService = $this->createMock(DoctorSurveyService::class);
+        /** @var SurveyService $mockDoctorSurveyService */
+        $mockDoctorSurveyService = $this->createMock(SurveyService::class);
 
         /** @var DocumentService|MockObject $mockDocumentService */
         $mockDocumentService = $this->createMock(DocumentService::class);
@@ -236,17 +236,17 @@ class CaseGeneratorTest extends TestCase
             PaymentService::class => $mockPaymentService,
             AccidentService::class => $mockAccidentService,
             PatientService::class => $mockPatientService,
-            AccidentStatusesService::class => $mockAccidentStatusesService,
+            AccidentStatusService::class => $mockAccidentStatusesService,
             AssistantService::class => $mockAssistantService,
             DoctorAccidentService::class => $mockDoctorAccidentService,
             AccidentTypeService::class => $mockAccidentTypeService,
             CityService::class => $mockCityService,
             CurrencyService::class => $mockCurrencyService,
-            DoctorsService::class => $mockDoctorsService,
+            DoctorService::class => $mockDoctorsService,
             UserService::class => $mockUserService,
-            DoctorServiceService::class => $mockDoctorServiceService,
+            ServiceService::class => $mockDoctorServiceService,
             DiagnosticService::class => $mockDiagnosticService,
-            DoctorSurveyService::class => $mockDoctorSurveyService,
+            SurveyService::class => $mockDoctorSurveyService,
             DocumentService::class => $mockDocumentService,
             TmpFileService::class => $mockTmpFileService,
             ImportLogService::class => $mockImportLogService,

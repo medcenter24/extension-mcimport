@@ -19,7 +19,7 @@
 namespace medcenter24\McImport\Contract;
 
 
-use medcenter24\mcCore\App\Accident;
+use medcenter24\mcCore\App\Entity\Accident;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\McImport\Exceptions\ImporterException;
 

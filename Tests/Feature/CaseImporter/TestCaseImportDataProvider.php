@@ -18,7 +18,7 @@
 namespace medcenter24\McImport\Tests\Feature\CaseImporter;
 
 
-use medcenter24\mcCore\App\DoctorAccident;
+use medcenter24\mcCore\App\Entity\DoctorAccident;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 
 class TestCaseImportDataProvider implements CaseImporterDataProvider

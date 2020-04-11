@@ -21,8 +21,8 @@ declare(strict_types = 1);
 namespace medcenter24\McImport\Services\ImportLog;
 
 use Exception;
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\Services\AbstractModelService;
+use medcenter24\mcCore\App\Entity\Accident;
+use medcenter24\mcCore\App\Services\Entity\AbstractModelService;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Entities\ImportLog;
 
@@ -122,10 +122,5 @@ class ImportLogService extends AbstractModelService
             self::FIELD_DATA_PROVIDER => '',
             self::FIELD_STATUS => '',
         ];
-    }
-
-    protected function getUpdatableFields(): array
-    {
-        return self::UPDATABLE;
     }
 }

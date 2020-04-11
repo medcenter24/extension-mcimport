@@ -21,7 +21,7 @@ namespace medcenter24\McImport\Services\DocxReader;
 use DOMDocument;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
-use medcenter24\mcCore\App\Services\DocumentService;
+use medcenter24\mcCore\App\Services\Entity\DocumentService;
 use medcenter24\mcCore\App\Services\DomDocumentService;
 use medcenter24\mcCore\App\Services\ExtractTableFromArrayService;
 use medcenter24\McImport\Contract\DocumentReaderService;
