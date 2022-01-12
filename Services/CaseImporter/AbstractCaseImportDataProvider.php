@@ -263,11 +263,6 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
     }
 
     /**
-     * @return string
-     */
-    abstract protected function getDoctorInvestigation(): string;
-
-    /**
      * @return array
      * @example
      * [
