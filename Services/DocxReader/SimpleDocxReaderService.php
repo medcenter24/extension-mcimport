@@ -16,8 +16,9 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services\DocxReader;
+declare(strict_types=1);
 
+namespace medcenter24\McImport\Services\DocxReader;
 
 use DOMDocument;
 use Illuminate\Support\Facades\Log;
@@ -69,15 +70,15 @@ class SimpleDocxReaderService implements DocumentReaderService
     /**
      * Get dom of the document
      *
-     * @param $archiveFile
-     * @param $dataFile
+     * @param string $archiveFile
+     * @param string $dataFile
      * @return DomDocument
      * @throws InconsistentDataException
      */
     private function readZippedXML(string $archiveFile, string $dataFile): DomDocument
     {
         // Create new ZIP archive
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
 
         // Open received archive file
         if (true === ($zipErr = $zip->open($archiveFile))) {
@@ -108,7 +109,7 @@ class SimpleDocxReaderService implements DocumentReaderService
     {
         $files = [];
         // Create new ZIP archive
-        $zip = new ZipArchive;
+        $zip = new ZipArchive();
 
         // Open received archive file
         if (true === $zip->open($archiveFile)) {

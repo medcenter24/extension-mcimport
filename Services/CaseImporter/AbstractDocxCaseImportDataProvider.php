@@ -15,13 +15,14 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
+declare(strict_types=1);
 
 namespace medcenter24\McImport\Services\CaseImporter;
-
 
 use Carbon\Carbon;
 use Exception;
 use FilesystemIterator;
+use JetBrains\PhpStorm\ArrayShape;
 use medcenter24\mcCore\App\Helpers\FileHelper;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\DocumentReaderService;
@@ -42,6 +43,7 @@ abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportData
         return ['docx'];
     }
 
+    #[ArrayShape(['startsWith' => "string"])]
     public function getExcludeRules(): array
     {
         return ['startsWith' => '~$'];
@@ -65,11 +67,18 @@ abstract class AbstractDocxCaseImportDataProvider extends AbstractCaseImportData
         return $docs;
     }
 
+    /**
+     * @return string
+     */
     protected function getExcludedFilesPath(): string
     {
         return '';
     }
 
+    /**
+     * @param array $file
+     * @return bool
+     */
     private function isExcludedFile(array $file): bool
     {
         /** @var string $excludeDir */

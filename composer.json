@@ -4,12 +4,6 @@
     "type": "medcenter24-extension",
     "description": "Import processes and types.",
     "keywords": ["medcenter24", "extension", "module", "package", "mcimport"],
-    "authors": [
-        {
-            "name": "Oleksandr Zagovorychev",
-            "email": "zagovorychev@gmail.com"
-        }
-    ],
     "extra": {
         "medcenter24-extension-name": "McImport",
         "laravel": {

@@ -20,21 +20,21 @@ namespace medcenter24\McImport\Tests\Feature\CaseImporter;
 
 use Illuminate\Foundation\Testing\DatabaseMigrations;
 use Illuminate\Http\UploadedFile;
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\AccidentAbstract;
-use medcenter24\mcCore\App\AccidentStatus;
-use medcenter24\mcCore\App\AccidentStatusHistory;
-use medcenter24\mcCore\App\AccidentType;
-use medcenter24\mcCore\App\Assistant;
-use medcenter24\mcCore\App\City;
-use medcenter24\mcCore\App\Country;
-use medcenter24\mcCore\App\Doctor;
-use medcenter24\mcCore\App\DoctorAccident;
-use medcenter24\mcCore\App\FinanceCurrency;
-use medcenter24\mcCore\App\Patient;
-use medcenter24\mcCore\App\Payment;
-use medcenter24\mcCore\App\Region;
-use medcenter24\mcCore\App\User;
+use medcenter24\mcCore\App\Entity\Accident;
+use medcenter24\mcCore\App\Entity\AccidentAbstract;
+use medcenter24\mcCore\App\Entity\AccidentStatus;
+use medcenter24\mcCore\App\Entity\AccidentStatusHistory;
+use medcenter24\mcCore\App\Entity\AccidentType;
+use medcenter24\mcCore\App\Entity\Assistant;
+use medcenter24\mcCore\App\Entity\City;
+use medcenter24\mcCore\App\Entity\Country;
+use medcenter24\mcCore\App\Entity\Doctor;
+use medcenter24\mcCore\App\Entity\DoctorAccident;
+use medcenter24\mcCore\App\Entity\FinanceCurrency;
+use medcenter24\mcCore\App\Entity\Patient;
+use medcenter24\mcCore\App\Entity\Payment;
+use medcenter24\mcCore\App\Entity\Region;
+use medcenter24\mcCore\App\Entity\User;
 use medcenter24\mcCore\Tests\samples\SamplesTrait;
 use medcenter24\mcCore\Tests\TestCase;
 use medcenter24\McImport\Exceptions\CaseGeneratorException;
@@ -91,14 +91,14 @@ class CaseGeneratorIntegrationTest extends TestCase
 
         /** @var Payment $caseablePayment */
         $caseablePayment = $accident->getAttribute('paymentToCaseable');
-        $this->assertSame('{"created_by":"1","value":"70","currency_id":"1","fixed":"1","description":""}', $caseablePayment->toJson());
+        $this->assertSame('{"created_by":"1","value":"0","currency_id":"1","fixed":"1","description":""}', $caseablePayment->toJson());
 
         /** @var FinanceCurrency $caseablePaymentCurrency */
         $caseablePaymentCurrency = $caseablePayment->getAttribute('currency');
         $this->assertSame('{"id":1,"title":"Euro","code":"eu","ico":"fa fa-euro"}', $caseablePaymentCurrency->toJson());
 
         $payment = $accident->getAttribute('incomePayment');
-        $this->assertSame('0', $payment->getAttribute('value'), 'Income generated with correct value');
+        $this->assertSame('70', $payment->getAttribute('value'), 'Income generated with correct value');
         $this->assertSame(2, $payment->getAttribute('id'), 'Income generated with correct id');
         $this->assertNull($accident->getAttribute('paymentFromAssistant'), 'No payment from assistant provided');
         $this->assertCount(0, $accident->getAttribute('checkpoints'), 'No checkpoints in test');
@@ -165,27 +165,21 @@ class CaseGeneratorIntegrationTest extends TestCase
         $this->assertSame('{"id":2,"title":"imported","type":"accident"}', $accidentStatus->toJson());
 
         $caseableServices = $caseable->getAttribute('services');
-        $this->assertCount(0, $caseableServices);
-        $accidentServices = $accident->getAttribute('services');
-        $this->assertCount(2, $accidentServices);
-        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_code":"","status":"active"}', $accidentServices->get(0)->toJson());
-        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_code":"","status":"active"}', $accidentServices->get(1)->toJson());
+        $this->assertCount(2, $caseableServices);
+        $this->assertSame('{"id":1,"created_by":"1","title":"s1","description":"test","disease_id":"0","status":"active"}', $caseableServices->get(0)->toJson());
+        $this->assertSame('{"id":2,"created_by":"1","title":"s2","description":"test","disease_id":"0","status":"active"}', $caseableServices->get(1)->toJson());
 
         $diagnostics = $caseable->getAttribute('diagnostics');
-        $this->assertCount(0, $diagnostics);
-        $diagnostics = $accident->getAttribute('diagnostics');
         $this->assertCount(2, $diagnostics);
-        $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_code":"","status":"active","description":"test"}', $diagnostics->get(0)->toJson());
-        $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_code":"","status":"active","description":"test"}', $diagnostics->get(1)->toJson());
+        $this->assertSame('{"id":1,"diagnostic_category_id":"0","title":"diag 1","disease_id":"0","status":"active","description":"test"}', $diagnostics->get(0)->toJson());
+        $this->assertSame('{"id":2,"diagnostic_category_id":"0","title":"diag 2","disease_id":"0","status":"active","description":"test"}', $diagnostics->get(1)->toJson());
 
         $surveys = $caseable->getAttribute('surveys');
-        $this->assertCount(0, $surveys);
-        $surveys = $accident->getAttribute('surveys');
         $this->assertCount(4, $surveys);
-        $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_code":"","status":"active"}', $surveys->get(0)->toJson());
-        $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_code":"","status":"active"}', $surveys->get(1)->toJson());
-        $this->assertSame('{"id":3,"title":"Neurological status is normal.","description":"","disease_code":"","status":"active"}', $surveys->get(2)->toJson());
-        $this->assertSame('{"id":4,"title":"Otherwise, there is no pathology.","description":"test","disease_code":"","status":"active"}', $surveys->get(3)->toJson());
+        $this->assertSame('{"id":1,"title":"General condition is satisfactory.","description":"test","disease_id":"0","status":"active"}', $surveys->get(0)->toJson());
+        $this->assertSame('{"id":2,"title":"Heart tones are rhythmic, no pathological noise.","description":"test","disease_id":"0","status":"active"}', $surveys->get(1)->toJson());
+        $this->assertSame('{"id":3,"title":"Neurological status is normal.","description":"","disease_id":"0","status":"active"}', $surveys->get(2)->toJson());
+        $this->assertSame('{"id":4,"title":"Otherwise, there is no pathology.","description":"test","disease_id":"0","status":"active"}', $surveys->get(3)->toJson());
 
         $documents = $caseable->getAttribute('documents');
         $this->assertCount(0, $documents);

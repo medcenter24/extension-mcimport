@@ -18,7 +18,7 @@
 
 namespace medcenter24\mcCore\Tests\Feature\Api\Director;
 
-use medcenter24\mcCore\App\User;
+use medcenter24\mcCore\App\Entity\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use medcenter24\mcCore\Tests\Feature\Api\JwtHeaders;

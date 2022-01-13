@@ -19,9 +19,6 @@ namespace medcenter24\McImport\Services\CaseImporter\DocxDataProviders;
 
 
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
-use medcenter24\mcCore\App\Helpers\Arr;
-use medcenter24\mcCore\App\Services\DomDocumentService;
-use medcenter24\mcCore\App\Services\ExtractTableFromArrayService;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\McImport\Contract\DocumentReaderService;
 use medcenter24\McImport\Exceptions\ImporterException;
@@ -227,9 +224,9 @@ abstract class TextDataProvider extends AbstractCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    public function getDoctorPaymentPrice(): float
+    public function getIncomePrice(): float
     {
-        return $this->getMethodDataFromRootTableMap('getDoctorPaymentPrice');
+        return $this->getMethodDataFromRootTableMap('getIncomePrice');
     }
 
     /**

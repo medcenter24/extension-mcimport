@@ -15,8 +15,9 @@
  * Copyright (c) 2019 (original work) MedCenter24.com;
  */
 
-namespace medcenter24\McImport\Services\CaseImporter\DocxDataProviders;
+declare(strict_types=1);
 
+namespace medcenter24\McImport\Services\CaseImporter\DocxDataProviders;
 
 use ErrorException;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
@@ -31,7 +32,6 @@ use medcenter24\McImport\Services\CaseImporter\AbstractDocxCaseImportDataProvide
 
 abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
 {
-
     use ServiceLocatorTrait;
     use ArrayCacheTrait;
 
@@ -44,7 +44,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @return mixed
      * @throws InconsistentDataException
      */
-    protected function getDocxRoot()
+    protected function getDocxRoot(): mixed
     {
         if (!$this->hasCache('docx')) {
             /** @var ExtractTableFromArrayService $extractor */
@@ -71,7 +71,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    protected function getRootTables()
+    protected function getRootTables(): mixed
     {
         if (!$this->hasCache('rootTable')) {
             $tables = $this->getDocxRoot();
@@ -125,7 +125,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    protected function getRootTableData(array $path)
+    protected function getRootTableData(array $path): mixed
     {
         $table = $this->getRootTables();
         foreach ($path as $key) {
@@ -168,7 +168,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    private function getMethodDataFromRootTableMap(string $methodName)
+    private function getMethodDataFromRootTableMap(string $methodName): mixed
     {
         $key = 'rootMap_'.$methodName;
         if (!$this->hasCache($key)) {
@@ -224,9 +224,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getPatientName(): string
     {
-        $patientName =  $this->getStringFromRootTableMap('getPatientName');
-        $this->throwIfFalse(is_string($patientName), 'Patient name expected to be a string');
-        return $patientName;
+        return $this->getStringFromRootTableMap('getPatientName');
     }
 
     /**
@@ -236,9 +234,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      */
     public function getPatientBirthday(): string
     {
-        $birthday = $this->getStringFromRootTableMap('getPatientBirthday');
-        $this->throwIfFalse(is_string($birthday), 'Birthday expected to be a string');
-        return $birthday;
+        return $this->getStringFromRootTableMap('getPatientBirthday');
     }
 
     /**
@@ -316,9 +312,9 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
      * @throws ImporterException
      * @throws InconsistentDataException
      */
-    public function getDoctorPaymentPrice(): float
+    public function getIncomePrice(): float
     {
-        return $this->getStringFromRootTableMap('getDoctorPaymentPrice');
+        return (float) $this->getStringFromRootTableMap('getIncomePrice');
     }
 
     /**
@@ -396,7 +392,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
 
     /**
      * @param string $method
-     * @return string
+     * @return array
      * @throws ImporterException
      * @throws InconsistentDataException
      */
@@ -505,7 +501,7 @@ abstract class RootTableDataProvider extends AbstractDocxCaseImportDataProvider
     public function isReappointment(): bool
     {
         $markers = $this->getParentAccidentMarkers();
-        return is_array($markers) && array_key_exists(self::PARENT_ACCIDENT_MARKER_INTERNAL_REF_NUM, $markers);
+        return array_key_exists(self::PARENT_ACCIDENT_MARKER_INTERNAL_REF_NUM, $markers);
     }
 
 }

@@ -20,8 +20,8 @@ namespace medcenter24\McImport\Http\Controllers\Api\V1\Director;
 
 
 use Dingo\Api\Http\Response;
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\Http\Controllers\ApiController;
+use medcenter24\mcCore\App\Entity\Accident;
+use medcenter24\mcCore\App\Http\Controllers\Api\ApiController;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
 use medcenter24\mcCore\App\Services\UploaderService;
 use medcenter24\mcCore\App\Transformers\UploadedFileTransformer;

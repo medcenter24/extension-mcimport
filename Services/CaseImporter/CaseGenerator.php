@@ -21,49 +21,50 @@ namespace medcenter24\McImport\Services\CaseImporter;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\AccidentAbstract;
-use medcenter24\mcCore\App\AccidentStatus;
-use medcenter24\mcCore\App\AccidentType;
-use medcenter24\mcCore\App\Assistant;
-use medcenter24\mcCore\App\City;
-use medcenter24\mcCore\App\Country;
-use medcenter24\mcCore\App\Doctor;
-use medcenter24\mcCore\App\DoctorAccident;
-use medcenter24\mcCore\App\DoctorSurvey;
-use medcenter24\mcCore\App\Document;
+use medcenter24\mcCore\App\Entity\Accident;
+use medcenter24\mcCore\App\Entity\AccidentAbstract;
+use medcenter24\mcCore\App\Entity\AccidentStatus;
+use medcenter24\mcCore\App\Entity\AccidentType;
+use medcenter24\mcCore\App\Entity\Assistant;
+use medcenter24\mcCore\App\Entity\City;
+use medcenter24\mcCore\App\Entity\Country;
+use medcenter24\mcCore\App\Entity\Disease;
+use medcenter24\mcCore\App\Entity\Doctor;
+use medcenter24\mcCore\App\Entity\DoctorAccident;
+use medcenter24\mcCore\App\Entity\Survey;
+use medcenter24\mcCore\App\Entity\Document;
 use medcenter24\mcCore\App\Exceptions\InconsistentDataException;
-use medcenter24\mcCore\App\FinanceCurrency;
+use medcenter24\mcCore\App\Entity\FinanceCurrency;
 use medcenter24\mcCore\App\Helpers\FileHelper;
-use medcenter24\mcCore\App\Hospital;
-use medcenter24\mcCore\App\HospitalAccident;
-use medcenter24\mcCore\App\Patient;
-use medcenter24\mcCore\App\Payment;
-use medcenter24\mcCore\App\Region;
-use medcenter24\mcCore\App\Services\AbstractModelService;
-use medcenter24\mcCore\App\Services\AccidentService;
-use medcenter24\mcCore\App\Services\AccidentStatusesService;
-use medcenter24\mcCore\App\Services\AccidentTypeService;
-use medcenter24\mcCore\App\Services\AssistantService;
-use medcenter24\mcCore\App\Services\CityService;
+use medcenter24\mcCore\App\Entity\Hospital;
+use medcenter24\mcCore\App\Entity\HospitalAccident;
+use medcenter24\mcCore\App\Entity\Patient;
+use medcenter24\mcCore\App\Entity\Payment;
+use medcenter24\mcCore\App\Entity\Region;
+use medcenter24\mcCore\App\Services\Entity\AbstractModelService;
+use medcenter24\mcCore\App\Services\Entity\AccidentService;
+use medcenter24\mcCore\App\Services\Entity\AccidentStatusService;
+use medcenter24\mcCore\App\Services\Entity\AccidentTypeService;
+use medcenter24\mcCore\App\Services\Entity\AssistantService;
+use medcenter24\mcCore\App\Services\Entity\CityService;
 use medcenter24\mcCore\App\Services\Core\Logger\DebugLoggerTrait;
-use medcenter24\mcCore\App\Services\CountryService;
-use medcenter24\mcCore\App\Services\CurrencyService;
-use medcenter24\mcCore\App\Services\DiagnosticService;
-use medcenter24\mcCore\App\Services\DoctorAccidentService;
-use medcenter24\mcCore\App\Services\DoctorServiceService;
-use medcenter24\mcCore\App\Services\DoctorsService;
-use medcenter24\mcCore\App\Services\DoctorSurveyService;
-use medcenter24\mcCore\App\Services\DocumentService;
+use medcenter24\mcCore\App\Services\Entity\CountryService;
+use medcenter24\mcCore\App\Services\Entity\CurrencyService;
+use medcenter24\mcCore\App\Services\Entity\DiagnosticService;
+use medcenter24\mcCore\App\Services\Entity\DoctorAccidentService;
+use medcenter24\mcCore\App\Services\Entity\ServiceService;
+use medcenter24\mcCore\App\Services\Entity\DoctorService;
+use medcenter24\mcCore\App\Services\Entity\SurveyService;
+use medcenter24\mcCore\App\Services\Entity\DocumentService;
 use medcenter24\mcCore\App\Services\File\TmpFileService;
-use medcenter24\mcCore\App\Services\HospitalAccidentService;
-use medcenter24\mcCore\App\Services\HospitalService;
-use medcenter24\mcCore\App\Services\PatientService;
-use medcenter24\mcCore\App\Services\PaymentService;
+use medcenter24\mcCore\App\Services\Entity\HospitalAccidentService;
+use medcenter24\mcCore\App\Services\Entity\HospitalService;
+use medcenter24\mcCore\App\Services\Entity\PatientService;
+use medcenter24\mcCore\App\Services\Entity\PaymentService;
 use medcenter24\mcCore\App\Services\Core\ServiceLocator\ServiceLocatorTrait;
-use medcenter24\mcCore\App\Services\RegionService;
-use medcenter24\mcCore\App\Services\UserService;
-use medcenter24\mcCore\App\User;
+use medcenter24\mcCore\App\Services\Entity\RegionService;
+use medcenter24\mcCore\App\Services\Entity\UserService;
+use medcenter24\mcCore\App\Entity\User;
 use medcenter24\McImport\Contract\CaseGeneratorInterface;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 use medcenter24\McImport\Entities\Importing\ImportingCase;
@@ -312,8 +313,8 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     private function getAccidentStatus(): AccidentStatus
     {
-        /** @var AccidentStatusesService $service */
-        $service = $this->getServiceLocator()->get(AccidentStatusesService::class);
+        /** @var AccidentStatusService $service */
+        $service = $this->getServiceLocator()->get(AccidentStatusService::class);
         return $service->getImportedStatus();
     }
 
@@ -384,7 +385,7 @@ class CaseGenerator implements CaseGeneratorInterface
         $paymentService = $this->getServiceLocator()->get(PaymentService::class);
         /** @var Payment $payment */
         $payment = $paymentService->create([
-            'value' => $this->getDataProvider()->getDoctorPaymentPrice(),
+            'value' => 0,
             'currency_id' => $this->getCurrency()->getAttribute('id'),
             'fixed' => 1,
             'created_by' => $this->getImporterUser()->getAttribute('id'),
@@ -403,7 +404,7 @@ class CaseGenerator implements CaseGeneratorInterface
         $paymentService = $this->getServiceLocator()->get(PaymentService::class);
         /** @var Payment $payment */
         $payment = $paymentService->create([
-            'value' => 0,
+            'value' => $this->getDataProvider()->getIncomePrice(),
             'currency_id' => $this->getCurrency()->getAttribute('id'),
             'fixed' => 1,
             'created_by' => $this->getImporterUser()->getAttribute('id'),
@@ -477,8 +478,8 @@ class CaseGenerator implements CaseGeneratorInterface
      */
     private function getDoctor(): Doctor
     {
-        /** @var DoctorsService $doctorService */
-        $doctorService = $this->getServiceLocator()->get(DoctorsService::class);
+        /** @var DoctorService $doctorService */
+        $doctorService = $this->getServiceLocator()->get(DoctorService::class);
         if ($this->getDataProvider()->getDoctorName()) {
             $name = $this->getDataProvider()->getDoctorName();
         } else {
@@ -597,7 +598,7 @@ class CaseGenerator implements CaseGeneratorInterface
                     'created_by' => $this->getImporterUser()->getAttribute('id'),
                     'title' => $dataItem['title'],
                     'description' => $dataItem['description'] ?? '',
-                    'disease_code' => $dataItem['disease_code'] ?? '',
+                    'disease_id' => $dataItem['disease_id'] ?? 0,
                 ]);
                 $allObjs[] = $obj->getAttribute('id');
             }
@@ -613,10 +614,10 @@ class CaseGenerator implements CaseGeneratorInterface
     {
         /** @var array $dataList */
         $dataList = $this->getDataProvider()->getDoctorServices();
-        /** @var AbstractModelService|DoctorServiceService $service */
-        $service = $this->getServiceLocator()->get(DoctorServiceService::class);
+        /** @var AbstractModelService|ServiceService $service */
+        $service = $this->getServiceLocator()->get(ServiceService::class);
         /** @var MorphToMany $model */
-        $model = $this->getEntity()->getAccident()->services();
+        $model = $this->getEntity()->getCaseable()->services();
 
         $ids = $this->createFormattedDocResourcesIds($dataList, $service);
         $this->bindMorphed($ids, $model);
@@ -632,7 +633,7 @@ class CaseGenerator implements CaseGeneratorInterface
         /** @var AbstractModelService|DiagnosticService $service */
         $service = $this->getServiceLocator()->get(DiagnosticService::class);
         /** @var MorphToMany $model */
-        $model = $this->getEntity()->getAccident()->diagnostics();
+        $model = $this->getEntity()->getCaseable()->diagnostics();
         $ids = $this->createFormattedDocResourcesIds($dataList, $service);
         $this->bindMorphed($ids, $model);
     }
@@ -643,9 +644,7 @@ class CaseGenerator implements CaseGeneratorInterface
     private function addSurveys(): void
     {
         $dataList = $this->getDataProvider()->getDoctorSurveys();
-        /** @var DoctorSurveyService $service */
-        $service = $this->getServiceLocator()->get(DoctorSurveyService::class);
-        $model = $this->getEntity()->getAccident()->surveys();
+        $model = $this->getEntity()->getCaseable()->surveys();
 
         // we have to exclude duplications
         $allObjs = [];
@@ -659,18 +658,38 @@ class CaseGenerator implements CaseGeneratorInterface
                     throw new CaseGeneratorException('Undefined title of the resource');
                 }
 
-                /** @var DoctorSurvey $obj */
-                $obj = $service->byTitleLettersOrCreate([
-                    'created_by' => $this->getImporterUser()->getAttribute('id'),
-                    'title' => $dataItem['title'],
-                    'description' => $dataItem['description'] ?? '',
-                    'disease_code' => $dataItem['disease_code'] ?? '',
-                ]);
-                $allObjs[] = $obj->getAttribute('id');
+                if (Str::length($dataItem['title']) > 180 && mb_stripos($dataItem['title'], ',') !== false) {
+                    foreach (explode(',', $dataItem['title']) as $title) {
+                        $allObjs[] = $this
+                            ->addSurvey($title, $dataItem['description'] ?? '', $dataItem['disease_id'] ?? '')
+                            ->getAttribute('id');
+                    }
+                } else {
+                    $allObjs[] = $this
+                        ->addSurvey($dataItem['title'], $dataItem['description'] ?? '', $dataItem['disease_id'] ?? 0)
+                        ->getAttribute('id');
+                }
             }
         }
 
         $this->bindMorphed($allObjs, $model);
+    }
+
+    private function addSurvey(string $title = '', string $description='', string $disease=''): Survey
+    {
+        /** @var SurveyService $service */
+        $service = $this->getServiceLocator()->get(SurveyService::class);
+
+        $diseaseService = $this->getServiceLocator()->get(DiseaseService::class);
+        /** @var Disease $diseaseModel */
+        $diseaseModel = $diseaseService->create($disease);
+        /** @var Survey $obj */
+        return $service->byTitleLettersOrCreate([
+            'created_by' => $this->getImporterUser()->getAttribute('id'),
+            'title' => Str::limit($title, 250),
+            'description' => $description,
+            'disease_id' => $diseaseModel ? $diseaseModel->getAttribute('id') : 0,
+        ]);
     }
 
     /**

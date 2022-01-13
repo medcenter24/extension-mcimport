@@ -244,7 +244,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
             'getDoctorGender' => [self::RULE_STRING, self::RULE_REQUIRED],
             'getImages' => self::RULE_ARRAY,
             'getCaseableType' => [self::RULE_STRING, self::RULE_REQUIRED],
-            'getDoctorPaymentPrice' => self::RULE_FLOAT,
+            'getIncomePrice' => self::RULE_FLOAT,
             'getCurrency' => self::RULE_STRING
         ];
     }
@@ -263,17 +263,12 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
     }
 
     /**
-     * @return string
-     */
-    abstract protected function getDoctorInvestigation(): string;
-
-    /**
      * @return array
      * @example
      * [
      *   'title' => '',
      *   'description' => '',
-     *   'disease_code' => '',
+     *   'disease_id' => 0,
      * ]
      */
     public function getDoctorSurveys(): array
@@ -287,7 +282,7 @@ abstract class AbstractCaseImportDataProvider implements CaseImporterDataProvide
                 $surveysFormatted[] = [
                     'title' => $title . '.',
                     'description' => 'import',
-                    'disease_code' => ''
+                    'disease_id' => 0,
                 ];
             }
         }

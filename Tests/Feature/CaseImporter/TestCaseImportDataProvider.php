@@ -18,7 +18,7 @@
 namespace medcenter24\McImport\Tests\Feature\CaseImporter;
 
 
-use medcenter24\mcCore\App\DoctorAccident;
+use medcenter24\mcCore\App\Entity\DoctorAccident;
 use medcenter24\McImport\Contract\CaseImporterDataProvider;
 
 class TestCaseImportDataProvider implements CaseImporterDataProvider
@@ -157,7 +157,7 @@ class TestCaseImportDataProvider implements CaseImporterDataProvider
         ];
     }
 
-    public function getDoctorPaymentPrice(): float
+    public function getIncomePrice(): float
     {
         return 70.0;
     }
@@ -253,12 +253,12 @@ class TestCaseImportDataProvider implements CaseImporterDataProvider
             [
                 'title' => 'General condition is satisfactory.',
                 'description' => 'test',
-                'disease_code' => ''
+                'disease_id' => 0,
             ],
             [
                 'title' => 'Heart tones are rhythmic, no pathological noise.',
                 'description' => 'test',
-                'disease_code' => ''
+                'disease_id' => 0,
             ],
             [
                 'title' => 'Neurological status is normal.',

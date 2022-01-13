@@ -116,7 +116,7 @@ abstract class AbstractParserTest extends TestCase
                      'getDoctorGender',
                      'getDoctorMedicalBoardingNum',
                      'getDoctorServices',
-                     'getDoctorPaymentPrice',
+                     'getIncomePrice',
                      'getCurrency',
                      'getVisitTime',
                      'getVisitDate',

@@ -19,10 +19,10 @@ namespace medcenter24\McImport\Entities\Importing;
 
 
 use Carbon\Carbon;
-use medcenter24\mcCore\App\Accident;
-use medcenter24\mcCore\App\AccidentAbstract;
-use medcenter24\mcCore\App\Patient;
-use medcenter24\mcCore\App\User;
+use medcenter24\mcCore\App\Entity\Accident;
+use medcenter24\mcCore\App\Entity\AccidentAbstract;
+use medcenter24\mcCore\App\Entity\Patient;
+use medcenter24\mcCore\App\Entity\User;
 
 /**
  * The state of the case for one operation of importing
