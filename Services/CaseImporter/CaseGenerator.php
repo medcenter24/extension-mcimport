@@ -17,7 +17,6 @@
 
 namespace medcenter24\McImport\Services\CaseImporter;
 
-
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
@@ -113,11 +112,11 @@ class CaseGenerator implements CaseGeneratorInterface
 
         $this->log('Case creation started...');
         $this->entity = new ImportingCase();
-        
+
         if ($this->date) {
             $this->getEntity()->setCurrentTime($this->date);
         }
-        
+
         $this->dataProvider = $dataProvider;
 
         $this->checkData();
@@ -230,6 +229,7 @@ class CaseGenerator implements CaseGeneratorInterface
             'city_id' => $this->getCity()->getAttribute('id'),
             'caseable_payment_id' => $this->getCaseablePayment()->getAttribute('id'),
             'income_payment_id' => $this->getIncomePayment()->getAttribute('id'),
+            'cash_payment_id' => $this->getCashPayment()->getAttribute('id'),
             'assistant_payment_id' => null,
             'caseable_id' => $this->getCaseable()->getAttribute('id'),
             'caseable_type' => $this->getDataProvider()->getCaseableType(),
@@ -247,7 +247,7 @@ class CaseGenerator implements CaseGeneratorInterface
         $accident->setAttribute('created_at', Carbon::parse($this->getDataProvider()->getCaseCreationDate()));
         $accident->setAttribute('updated_at', $this->getEntity()->getCurrentTime());
         $accident->save(['timestamps' => false]);
-        
+
         $this->log('Created case ' . $accident->getAttribute('id'));
         return $accident;
     }
@@ -742,5 +742,10 @@ class CaseGenerator implements CaseGeneratorInterface
         } catch (FileIsTooBig $e) {
             throw new CaseGeneratorException($e->getMessage());
         }
+    }
+
+    private function getCashPayment()
+    {
+
     }
 }
